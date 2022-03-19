@@ -41,8 +41,8 @@ BOOL BitmapImage::Load24BitsBitmap(const char * fileName)
 
 	// get nearest multiple of 4
 	// pitch = (width + 3) >> 2 << 2;
-	pitch = (width + 3) & ~0x03;
-	assert(pitch * height * 3 == infoHeader.ImageSize);
+	pitch = ((width * 3) + 3) & ~0x03;
+	assert(pitch * height == infoHeader.ImageSize);
 
 	temp = (unsigned char*)malloc(infoHeader.ImageSize * sizeof(unsigned char));
 	fread(temp, infoHeader.ImageSize, 1, fstream);
@@ -57,9 +57,9 @@ BOOL BitmapImage::Load24BitsBitmap(const char * fileName)
 		--line;
 		for (DWORD x = 0; x < width; ++x)
 		{
-			mpRawImage[line * widthBytes + x * 4 + 0] = temp[y * pitch * 3 + x * 3 + 2];
-			mpRawImage[line * widthBytes + x * 4 + 1] = temp[y * pitch * 3 + x * 3 + 1];
-			mpRawImage[line * widthBytes + x * 4 + 2] = temp[y * pitch * 3 + x * 3 + 0];
+			mpRawImage[line * widthBytes + x * 4 + 0] = temp[y * pitch + x * 3 + 2];
+			mpRawImage[line * widthBytes + x * 4 + 1] = temp[y * pitch + x * 3 + 1];
+			mpRawImage[line * widthBytes + x * 4 + 2] = temp[y * pitch + x * 3 + 0];
 			mpRawImage[line * widthBytes + x * 4 + 3] = (BYTE)255;
 		}
 	}
@@ -93,6 +93,11 @@ DWORD BitmapImage::GetPixel(DWORD x, DWORD y) const
 	return *((DWORD*)(mpRawImage)+y * mWidth + x);
 }
 
+void BitmapImage::SetPixel(DWORD x, DWORD y, DWORD color)
+{
+	*((DWORD*)(mpRawImage)+y * mWidth + x) = color;
+}
+
 char * BitmapImage::GetRawImage() const
 {
 	return mpRawImage;
@@ -101,6 +106,14 @@ char * BitmapImage::GetRawImage() const
 BitmapImage::~BitmapImage()
 {
 	Destroy();
+}
+
+BitmapImage::BitmapImage(BitmapImage* other)
+	: mWidth(other->mWidth)
+	, mHeight(other->mHeight)
+{
+	mpRawImage = new char[other->mWidth * other->mHeight * 4];
+	memcpy(mpRawImage, other->GetRawImage(), other->mWidth * other->mHeight * 4);
 }
 
 void BitmapImage::Destroy()
@@ -116,28 +129,50 @@ BOOL Save24BitsBitmap(const char * fileName, BitmapImage* src)
 {
 	BOOL bResult = FALSE;
 
+	const DWORD width = src->GetWidth();
+	const DWORD height = src->GetHeight();
+
 	const DWORD headerSize = sizeof(BitmapFileHeader) + sizeof(BitmapInfoHeader);
-	DWORD pitch = (src->GetWidth() + 3) & ~0x03;
+	const DWORD pitch = ((width * 3) + 3) & ~0x03;
 
 	BitmapFileHeader fileHeader;
-	fileHeader.Type = (WORD)0x424D;
-	fileHeader.FileSize = pitch * src->GetHeight() * 3 + headerSize;
+	fileHeader.Type = (WORD)0x4D42;
+	fileHeader.FileSize = pitch * height * 3 + headerSize;
 	fileHeader.Reserved1 = (WORD)0;
 	fileHeader.Reserved2 = (WORD)0;
 	fileHeader.Offset = headerSize;
 
 	BitmapInfoHeader infoHeader;
 	infoHeader.Size = sizeof(BitmapInfoHeader);
-	infoHeader.Width = src->GetWidth();
-	infoHeader.Height = src->GetHeight();
+	infoHeader.Width = width;
+	infoHeader.Height = height;
 	infoHeader.NumPlanes = (WORD)1;
 	infoHeader.BitsPerPixel = (WORD)24;
 	infoHeader.Compression = 0;
-	infoHeader.ImageSize = pitch * src->GetHeight() * 3;
+	infoHeader.ImageSize = pitch * height * 3;
 	infoHeader.HorizontalResolution = 0;
 	infoHeader.VerticalResolution = 0;
 	infoHeader.NumColor = 0;
 	infoHeader.NumColorUsed = 0;
+
+	const DWORD bufferSize = infoHeader.ImageSize * sizeof(unsigned char);
+	unsigned char* buffer = (unsigned char*)malloc(bufferSize);
+	memset(buffer, 0, bufferSize);
+	const char* pRawImage = src->GetRawImage();
+
+	DWORD line = height;
+	DWORD widthBytes = width * 4;
+
+	for (DWORD y = 0; y < height; ++y)
+	{
+		--line;
+		for (DWORD x = 0; x < width; ++x)
+		{
+			buffer[y * pitch + x * 3 + 0] = pRawImage[line * widthBytes + x * 4 + 2];
+			buffer[y * pitch + x * 3 + 1] = pRawImage[line * widthBytes + x * 4 + 1];
+			buffer[y * pitch + x * 3 + 2] = pRawImage[line * widthBytes + x * 4 + 0];
+		}
+	}
 
 	FILE* fstream = fopen(fileName, "wb");
 
@@ -146,7 +181,13 @@ BOOL Save24BitsBitmap(const char * fileName, BitmapImage* src)
 		goto RETURN;
 	}
 
+	fwrite(&fileHeader, sizeof(BitmapFileHeader), 1, fstream);
+	fwrite(&infoHeader, sizeof(BitmapInfoHeader), 1, fstream);
+	fwrite(buffer, bufferSize, 1, fstream);
+
 	fclose(fstream);
+
+	free(buffer);
 	bResult = TRUE;
 
 RETURN:

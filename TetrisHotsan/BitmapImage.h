@@ -37,11 +37,13 @@ class BitmapImage
 {
 public:
 	BitmapImage();
+	BitmapImage(BitmapImage* other);
 	~BitmapImage();
 	BOOL Load24BitsBitmap(const char * fileName);
 	DWORD GetWidth() const;
 	DWORD GetHeight() const;
 	DWORD GetPixel(DWORD x, DWORD y) const;
+	void SetPixel(DWORD x, DWORD y, DWORD color);
 	char* GetRawImage() const;
 private:
 	void Destroy();

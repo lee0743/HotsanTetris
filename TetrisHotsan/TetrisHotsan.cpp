@@ -1,5 +1,10 @@
-﻿// TetrisHotsan.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif /* _CRT_SECURE_NO_WARNINGS */
+// TetrisHotsan.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
+#include <stdio.h>
+#include <assert.h>
 
 #include "framework.h"
 #include "TetrisHotsan.h"
@@ -20,6 +25,8 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+
+static void SaveBlocksToAssets();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -46,15 +53,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	BlockImage* redBlockImage = nullptr;
+	SaveBlocksToAssets();
+
+	// BlockImage* redBlockImage = nullptr;
 	BitmapImage* blockBmpImage = new BitmapImage();
 
-	if (TRUE == blockBmpImage->Load24BitsBitmap("./assets/redBlock1.bmp"))
+	if (TRUE == blockBmpImage->Load24BitsBitmap("./assets/redBlock.bmp"))
 	{
 		DWORD colorKey = blockBmpImage->GetPixel(0, 0);
 
-		redBlockImage = new BlockImage();
-		redBlockImage->Create(blockBmpImage->GetRawImage(), blockBmpImage->GetWidth(), blockBmpImage->GetHeight(), colorKey);
+		// redBlockImage = new BlockImage();
+		// redBlockImage->Create(blockBmpImage->GetRawImage(), blockBmpImage->GetWidth(), blockBmpImage->GetHeight(), colorKey);
+
+		
 	}
 	delete blockBmpImage;
 
@@ -195,4 +206,98 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+static void SaveBlocksToAssets()
+{	// WARNING: FUCKING CODE
+	BitmapImage* srcImage = new BitmapImage();
+
+	BOOL result = srcImage->Load24BitsBitmap("./assets/redBlock.bmp");
+	assert(result == TRUE);
+
+	const DWORD numColor = 5;
+
+	const char* blockColorNames[numColor] = { "green", "blue", "purple", "gray", "ibory" };
+	DWORD blockColors[numColor] = { 0xff00ff00, 0xffff0000, 0xffff0080, 0xff808080, 0xffe7bfc8 };
+
+	char fileName[100];
+
+	BitmapImage* copied = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied);
+	}
+
+	delete copied;
+
+	memset(fileName, 0, 100);
+
+	result = srcImage->Load24BitsBitmap("./assets/redBlock1.bmp");
+	assert(result == TRUE);
+
+	BitmapImage* copied2 = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied2->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied2);
+	}
+
+	delete copied2;
+
+	memset(fileName, 0, 100);
+
+	result = srcImage->Load24BitsBitmap("./assets/redBlock2.bmp");
+	assert(result == TRUE);
+
+	BitmapImage* copied3 = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied3->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied3);
+	}
+
+	delete copied3;
 }
