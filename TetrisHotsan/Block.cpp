@@ -2,23 +2,10 @@
 
 Block::Block()
 {
-	for (DWORD i = 0; i < MAX_BLOCK_UNIT_COUNT; ++i)
-	{
-		mBlockUnits[i].Coord = { 0, };
-		mBlockUnits[i].blockImage = nullptr;
-	}
 }
 
 Block::~Block()
 {
-	for (DWORD i = 0; i < MAX_BLOCK_UNIT_COUNT; ++i)
-	{
-		if (mBlockUnits[i].blockImage != nullptr)
-		{
-			delete mBlockUnits[i].blockImage;
-			mBlockUnits[i].blockImage = nullptr;
-		}
-	}
 }
 
 Point Block::GetPos() const
@@ -43,19 +30,12 @@ void Block::SetPos(int x, int y)
 	mPositon.Y = y;
 }
 
-const BlockUnit * Block::GetBlockUnits() const
+BlockImage * Block::GetImage()
 {
-	return mBlockUnits;
+	return mImage;
 }
 
-void Block::AddBlockUnit(Rect Coord, BlockImage * blockUnits)
+void Block::SetImage(BlockImage * Image)
 {
-	mBlockUnits[mBlockUnitNum].Coord = Coord;
-	mBlockUnits[mBlockUnitNum].blockImage = new BlockImage(*blockUnits);
-	mBlockUnitNum++;
-}
-
-DWORD Block::GetBlockUnitCount() const
-{
-	return mBlockUnitNum;
+	mImage = Image;
 }

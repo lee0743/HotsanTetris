@@ -11,6 +11,7 @@
 #include "BitmapImage.h"
 #include "BlockImage.h"
 #include "Block.h"
+#include "DDraw.h"
 
 #define MAX_LOADSTRING 100
 
@@ -53,20 +54,30 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
+	DDraw* pDDraw = new DDraw();
+	pDDraw->Initialize(gHWnd);
+
 	SaveBlocksToAssets();
 
 	// BlockImage* redBlockImage = nullptr;
 	BitmapImage* blockBmpImage = new BitmapImage();
 
-	if (TRUE == blockBmpImage->Load24BitsBitmap("./assets/redBlock.bmp"))
+	if (TRUE == blockBmpImage->Load24BitsBitmap("./assets/redBlock1.bmp"))
 	{
-		DWORD colorKey = blockBmpImage->GetPixel(0, 0);
+		// DWORD colorKey = blockBmpImage->GetPixel(0, 0);
 
 		// redBlockImage = new BlockImage();
 		// redBlockImage->Create(blockBmpImage->GetRawImage(), blockBmpImage->GetWidth(), blockBmpImage->GetHeight(), colorKey);
 
-		
+		pDDraw->LockBackBuffer();
+		{
+			pDDraw->DrawBitmapImage(50, 50, blockBmpImage);
+			pDDraw->DrawBitmapImage(300, 300, blockBmpImage);
+		}
+		pDDraw->UnlockBackBuffer();
+		pDDraw->Blt();
 	}
+
 	delete blockBmpImage;
 
 	// 기본 메시지 루프입니다:
@@ -373,7 +384,7 @@ static void SaveBlocksToAssets()
 			{
 				if (srcImage->GetPixel(x, y) == 0xff241ced)
 				{
-					copied5->SetPixel(x, y, blockColors[i]);
+					copied6->SetPixel(x, y, blockColors[i]);
 				}
 			}
 		}

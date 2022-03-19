@@ -1,12 +1,18 @@
 #pragma once
 
 #include <ddraw.h>
+#include "BitmapImage.h"
 
 class DDraw
 {
 public:
 	DDraw();
-	BOOL Initialize();
+	BOOL Initialize(HWND hwnd);
+	BOOL LockBackBuffer();
+	void UnlockBackBuffer();
+	void Blt();
+
+	BOOL DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image);
 private:
 	IDirectDraw* mpDD = nullptr;
 	IDirectDraw7* mpDD7 = nullptr;
@@ -14,7 +20,11 @@ private:
 	IDirectDrawSurface7* mpDDBack = nullptr;
 	IDirectDrawClipper* mpClipper = nullptr;
 
+	char* mpLockedBackBuffer = nullptr;
+	DWORD mLockedBackBufferPitch = 0;
+	DWORD mWidth = 0;
+	DWORD mHeight = 0;
+
 	HWND mHWnd;
 	RECT mWindow;
 };
-
