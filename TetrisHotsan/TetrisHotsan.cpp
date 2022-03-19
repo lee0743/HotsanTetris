@@ -300,4 +300,88 @@ static void SaveBlocksToAssets()
 	}
 
 	delete copied3;
+
+	memset(fileName, 0, 100);
+
+	result = srcImage->Load24BitsBitmap("./assets/redBlock3.bmp");
+	assert(result == TRUE);
+
+	BitmapImage* copied4 = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied4->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock3.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied4);
+	}
+
+	delete copied4;
+
+	memset(fileName, 0, 100);
+
+	result = srcImage->Load24BitsBitmap("./assets/redBlock4.bmp");
+	assert(result == TRUE);
+
+	BitmapImage* copied5 = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied5->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied5);
+	}
+
+	delete copied5;
+
+	memset(fileName, 0, 100);
+
+	result = srcImage->Load24BitsBitmap("./assets/redBlock5.bmp");
+	assert(result == TRUE);
+
+	BitmapImage* copied6 = new BitmapImage(srcImage);
+
+	for (DWORD i = 0; i < numColor; ++i)
+	{
+
+		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		{
+			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
+			{
+				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				{
+					copied5->SetPixel(x, y, blockColors[i]);
+				}
+			}
+		}
+
+		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+
+		Save24BitsBitmap(fileName, copied6);
+	}
+
+	delete copied6;
 }
