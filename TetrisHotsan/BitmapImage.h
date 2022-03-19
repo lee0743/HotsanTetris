@@ -41,6 +41,7 @@ public:
 	BOOL Load24BitsBitmap(const char * fileName);
 	DWORD GetWidth() const;
 	DWORD GetHeight() const;
+	DWORD GetPixel(DWORD x, DWORD y) const;
 	char* GetRawImage() const;
 private:
 	void Destroy();
@@ -49,4 +50,6 @@ private:
 	DWORD mHeight = 0;
 	char* mpRawImage = nullptr;
 };
+
+BOOL Save24BitsBitmap(const char* fileName, BitmapImage* src);
 

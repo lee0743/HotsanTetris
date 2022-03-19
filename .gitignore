@@ -4,6 +4,7 @@ Thumbs.db
 #ignore fallback created by Visual Studio
 Browse.VC.db
 Browse.VC.opendb
+ipch
 #ignore Debug folder created by Visual 
 Debug
 #Ignore files build by Visual Studio
