@@ -1,0 +1,29 @@
+
+#ignore thumbnails created by windows
+Thumbs.db
+#ignore fallback created by Visual Studio
+Browse.VC.db
+Browse.VC.opendb
+#ignore Debug folder created by Visual 
+Debug
+#Ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.dll
+*.lib
+*.sbr

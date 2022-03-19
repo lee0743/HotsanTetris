@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\DDrawLib">
+      <UniqueIdentifier>{ee7dac7b-4787-48ad-95d8-94ccfd500851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Main">
+      <UniqueIdentifier>{49768f0c-a9a2-4561-85ce-a1e5289f4f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\BmpImg">
+      <UniqueIdentifier>{91bc74e8-6b57-4308-b138-ffe6ea242d18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Block">
+      <UniqueIdentifier>{e6a921de-997e-4912-93e1-f327c64f67c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Coord">
+      <UniqueIdentifier>{b38a9a83-4d8e-43a5-bb6d-4f9baad7de66}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapImage.h">
+      <Filter>소스 파일\BmpImg</Filter>
+    </ClInclude>
+    <ClInclude Include="DDraw.h">
+      <Filter>소스 파일\DDrawLib</Filter>
+    </ClInclude>
+    <ClInclude Include="TetrisHotsan.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockImage.h">
+      <Filter>소스 파일\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>소스 파일\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Coord.h">
+      <Filter>소스 파일\Coord</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BitmapImage.cpp">
+      <Filter>소스 파일\BmpImg</Filter>
+    </ClCompile>
+    <ClCompile Include="DDraw.cpp">
+      <Filter>소스 파일\DDrawLib</Filter>
+    </ClCompile>
+    <ClCompile Include="TetrisHotsan.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockImage.cpp">
+      <Filter>소스 파일\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>소스 파일\Block</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TetrisHotsan.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="TetrisHotsan.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
