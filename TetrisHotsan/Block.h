@@ -3,12 +3,6 @@
 #include "BlockImage.h"
 #include "Coord.h"
 
-struct BlockUnit
-{
-	Rect Coord;
-	BlockImage* blockImage;
-};
-
 class Block
 {
 public:

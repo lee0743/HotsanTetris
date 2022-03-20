@@ -164,35 +164,10 @@ BOOL DDraw::DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image)
 	int height = image->GetHeight();
 
 	char* pBits = image->GetRawImage();
+
+	if (FALSE == CalcClipArea(&x, &y, &width, &height))
 	{
-		int startX = max(0, x);
-		startX = min(mWidth, x);
-
-		int startY = max(0, y);
-		startY = min(mHeight, y);
-
-		int endX = max(x + width, 0);
-		endX = min(x + width, mWidth);
-
-		int endY = max(y + height, 0);
-		endY = min(y + height, mHeight);
-
-		int newWidth = endX - startX;
-		int newHeight = endY - startY;
-
-		if (newWidth <= 0 || newHeight <= 0)
-		{
-			return FALSE;
-		}
-
-		x = startX;
-		y = startY;
-
-		assert(newWidth <= width);
-		assert(newHeight <= height);
-
-		width = newWidth;
-		height = newHeight;
+		__debugbreak();
 	}
 
 	char* src = (char*)pBits;
@@ -227,35 +202,10 @@ BOOL DDraw::DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage * im
 	int height = image->GetHeight();
 
 	char* pBits = image->GetRawImage();
+	
+	if (FALSE == CalcClipArea(&x, &y, &width, &height))
 	{
-		int startX = max(0, x);
-		startX = min(mWidth, x);
-
-		int startY = max(0, y);
-		startY = min(mHeight, y);
-
-		int endX = max(x + width, 0);
-		endX = min(x + width, mWidth);
-
-		int endY = max(y + height, 0);
-		endY = min(y + height, mHeight);
-
-		int newWidth = endX - startX;
-		int newHeight = endY - startY;
-
-		if (newWidth <= 0 || newHeight <= 0)
-		{
-			return FALSE;
-		}
-
-		x = startX;
-		y = startY;
-
-		assert(newWidth <= width);
-		assert(newHeight <= height);
-
-		width = newWidth;
-		height = newHeight;
+		__debugbreak();
 	}
 
 	char* src = (char*)pBits;
@@ -279,6 +229,37 @@ BOOL DDraw::DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage * im
 		dest -= (width * 4);
 		dest += mLockedBackBufferPitch;
 	}
+
+	return TRUE;
+}
+
+BOOL DDraw::CalcClipArea(int* x, int* y, int* width, int* height)
+{
+	int startX = max(0, *x);
+	startX = min(mWidth, *x);
+
+	int startY = max(0, *y);
+	startY = min(mHeight, *y);
+
+	int endX = max(*x + *width, 0);
+	endX = min(*x + *width, mWidth);
+
+	int endY = max(*y + *height, 0);
+	endY = min(*y + *height, mHeight);
+
+	int clipedWidth = endX - startX;
+	int clipedHeight = endY - startY;
+
+	if (clipedWidth <= 0 || clipedHeight <= 0)
+	{
+		return FALSE;
+	}
+
+	*x = startX;
+	*y = startY;
+
+	*width = clipedWidth;
+	*height = clipedHeight;
 
 	return TRUE;
 }

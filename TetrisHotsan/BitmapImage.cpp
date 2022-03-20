@@ -116,6 +116,13 @@ BitmapImage::BitmapImage(BitmapImage* other)
 	memcpy(mpRawImage, other->GetRawImage(), other->mWidth * other->mHeight * 4);
 }
 
+BitmapImage::BitmapImage(DWORD width, DWORD height, char * rawImage)
+	: mWidth(width)
+	, mHeight(height)
+	, mpRawImage(rawImage)
+{
+}
+
 void BitmapImage::Destroy()
 {
 	if (nullptr != mpRawImage)
@@ -168,9 +175,9 @@ BOOL Save24BitsBitmap(const char * fileName, BitmapImage* src)
 		--line;
 		for (DWORD x = 0; x < width; ++x)
 		{
-			buffer[y * pitch + x * 3 + 0] = pRawImage[line * widthBytes + x * 4 + 2];
+			buffer[y * pitch + x * 3 + 0] = pRawImage[line * widthBytes + x * 4 + 0];
 			buffer[y * pitch + x * 3 + 1] = pRawImage[line * widthBytes + x * 4 + 1];
-			buffer[y * pitch + x * 3 + 2] = pRawImage[line * widthBytes + x * 4 + 0];
+			buffer[y * pitch + x * 3 + 2] = pRawImage[line * widthBytes + x * 4 + 2];
 		}
 	}
 

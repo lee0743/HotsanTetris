@@ -38,6 +38,7 @@ class BitmapImage
 public:
 	BitmapImage();
 	BitmapImage(BitmapImage* other);
+	BitmapImage(DWORD width, DWORD height, char* rawImage);
 	~BitmapImage();
 	BOOL Load24BitsBitmap(const char * fileName);
 	DWORD GetWidth() const;
@@ -54,4 +55,3 @@ private:
 };
 
 BOOL Save24BitsBitmap(const char* fileName, BitmapImage* src);
-

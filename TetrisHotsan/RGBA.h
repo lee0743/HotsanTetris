@@ -9,7 +9,16 @@ constexpr DWORD MakeRGBA(DWORD r, DWORD g, DWORD b, DWORD a = 0xff)
 	assert(0 <= b && b <= 255);
 	assert(0 <= a && a <= 255);
 
-	return (0xff << 24 | b << 16 | g << 8 | r); 
+	return (0xff << 24 | r << 16 | g << 8 | b);
+}
+
+constexpr DWORD RevRGBA(DWORD bgr)
+{
+	DWORD b = (bgr & 0x00ff0000) >> 16;
+	DWORD g = (bgr & 0x0000ff00) >> 8;
+	DWORD r = (bgr & 0x000000ff);
+
+	return (b << 24 | g << 16 | r << 8 | 0xff);
 }
 
 enum class EColor

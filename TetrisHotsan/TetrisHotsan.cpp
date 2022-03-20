@@ -14,7 +14,9 @@
 #include "RGBA.h"
 #include "TetrisHotsan.h"
 
-#define MAX_LOADSTRING 100
+#define MAX_LOADSTRING (100)
+#define MILLISECOND_TO_SECOND (1000)
+#define MAX_PATH_LENGTH (128)
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -38,6 +40,8 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 static void SaveBlocksToAssets();
+static void SaveBlocks(const char* srcFileName, const char* destFileName);
+static BitmapImage* GetRotatedBitmap(BitmapImage* src);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -109,7 +113,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	while (TRUE)
 	{
 		end_time = GetTickCount64();
-		interval_time = (end_time - start_time) / 1000;
+		interval_time = (end_time - start_time) / MILLISECOND_TO_SECOND;
 
 		if (TRUE == PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
@@ -252,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 	}
 	break;
-	case WM_KEYDOWN:
+	case WM_KEYUP:
 	{
 		if (canUseKeyDown)
 		{
@@ -308,178 +312,187 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 static void SaveBlocksToAssets()
 {	// WARNING: FUCKING CODE
+	BitmapImage* src = new BitmapImage();
+	{
+		src->Load24BitsBitmap("./assets/redBlock1.bmp");
+
+		BitmapImage* rotated90Degrees = GetRotatedBitmap(src);
+		Save24BitsBitmap("./assets/redBlock1Rotated1.bmp", rotated90Degrees);
+
+		BitmapImage* rotated180Degrees = GetRotatedBitmap(rotated90Degrees);
+		Save24BitsBitmap("./assets/redBlock1Rotated2.bmp", rotated180Degrees);
+
+		BitmapImage* rotated270Degrees = GetRotatedBitmap(rotated180Degrees);
+		Save24BitsBitmap("./assets/redBlock1Rotated3.bmp", rotated270Degrees);
+
+		delete rotated90Degrees;
+		delete rotated180Degrees;
+		delete rotated270Degrees;
+	}
+
+	{
+		src->Load24BitsBitmap("./assets/redBlock2.bmp");
+		BitmapImage* rotated90Degrees = GetRotatedBitmap(src);
+		Save24BitsBitmap("./assets/redBlock2Rotated1.bmp", rotated90Degrees);
+
+		BitmapImage* rotated180Degrees = GetRotatedBitmap(rotated90Degrees);
+		Save24BitsBitmap("./assets/redBlock2Rotated2.bmp", rotated180Degrees);
+
+		BitmapImage* rotated270Degrees = GetRotatedBitmap(rotated180Degrees);
+		Save24BitsBitmap("./assets/redBlock2Rotated3.bmp", rotated270Degrees);
+
+		delete rotated90Degrees;
+		delete rotated180Degrees;
+		delete rotated270Degrees;
+	}
+
+	{
+		src->Load24BitsBitmap("./assets/redBlock3.bmp");
+		BitmapImage* rotated90Degrees = GetRotatedBitmap(src);
+		Save24BitsBitmap("./assets/redBlock3Rotated1.bmp", rotated90Degrees);
+
+		BitmapImage* rotated180Degrees = GetRotatedBitmap(rotated90Degrees);
+		Save24BitsBitmap("./assets/redBlock3Rotated2.bmp", rotated180Degrees);
+
+		BitmapImage* rotated270Degrees = GetRotatedBitmap(rotated180Degrees);
+		Save24BitsBitmap("./assets/redBlock3Rotated3.bmp", rotated270Degrees);
+
+		delete rotated90Degrees;
+		delete rotated180Degrees;
+		delete rotated270Degrees;
+	}
+
+	{
+		src->Load24BitsBitmap("./assets/redBlock4.bmp");
+		BitmapImage* rotated90Degrees = GetRotatedBitmap(src);
+		Save24BitsBitmap("./assets/redBlock4Rotated1.bmp", rotated90Degrees);
+
+		BitmapImage* rotated180Degrees = GetRotatedBitmap(rotated90Degrees);
+		Save24BitsBitmap("./assets/redBlock4Rotated2.bmp", rotated180Degrees);
+
+		BitmapImage* rotated270Degrees = GetRotatedBitmap(rotated180Degrees);
+		Save24BitsBitmap("./assets/redBlock4Rotated3.bmp", rotated270Degrees);
+
+		delete rotated90Degrees;
+		delete rotated180Degrees;
+		delete rotated270Degrees;
+	}
+	
+	{
+		src->Load24BitsBitmap("./assets/redBlock5.bmp");
+		BitmapImage* rotated90Degrees = GetRotatedBitmap(src);
+		Save24BitsBitmap("./assets/redBlock5Rotated1.bmp", rotated90Degrees);
+
+		BitmapImage* rotated180Degrees = GetRotatedBitmap(rotated90Degrees);
+		Save24BitsBitmap("./assets/redBlock5Rotated2.bmp", rotated180Degrees);
+
+		BitmapImage* rotated270Degrees = GetRotatedBitmap(rotated180Degrees);
+		Save24BitsBitmap("./assets/redBlock5Rotated3.bmp", rotated270Degrees);
+
+		delete rotated90Degrees;
+		delete rotated180Degrees;
+		delete rotated270Degrees;
+	}
+
+	delete src;
+	src = nullptr;
+
+	SaveBlocks("redBlock.bmp", "Block.bmp");
+	SaveBlocks("redBlock1.bmp", "Block1.bmp");
+	SaveBlocks("redBlock2.bmp", "Block2.bmp");
+	SaveBlocks("redBlock3.bmp", "Block3.bmp");
+	SaveBlocks("redBlock4.bmp", "Block4.bmp");
+	SaveBlocks("redBlock5.bmp", "Block5.bmp");
+
+	SaveBlocks("redBlock1Rotated1.bmp", "Block1Rotated1.bmp");
+	SaveBlocks("redBlock1Rotated2.bmp", "Block2Rotated2.bmp");
+	SaveBlocks("redBlock1Rotated3.bmp", "Block3Rotated3.bmp");
+
+	SaveBlocks("redBlock2Rotated1.bmp", "Block2Rotated1.bmp");
+	SaveBlocks("redBlock2Rotated2.bmp", "Block2Rotated2.bmp");
+	SaveBlocks("redBlock2Rotated3.bmp", "Block2Rotated3.bmp");
+
+	SaveBlocks("redBlock3Rotated1.bmp", "Block3Rotated1.bmp");
+	SaveBlocks("redBlock3Rotated2.bmp", "Block3Rotated2.bmp");
+	SaveBlocks("redBlock3Rotated3.bmp", "Block3Rotated3.bmp");
+
+	SaveBlocks("redBlock4Rotated1.bmp", "Block4Rotated1.bmp");
+	SaveBlocks("redBlock4Rotated2.bmp", "Block4Rotated2.bmp");
+	SaveBlocks("redBlock4Rotated3.bmp", "Block4Rotated3.bmp");
+
+	SaveBlocks("redBlock5Rotated1.bmp", "Block5Rotated1.bmp");
+	SaveBlocks("redBlock5Rotated2.bmp", "Block5Rotated2.bmp");
+	SaveBlocks("redBlock5Rotated3.bmp", "Block5Rotated3.bmp");
+}
+
+static void SaveBlocks(const char* srcFileName, const char* destFileName)
+{
+	char srcFilePath[MAX_PATH_LENGTH];
+	char destFilePath[MAX_PATH_LENGTH];
+
+	sprintf(srcFilePath, "./assets/%s", srcFileName);
+
 	BitmapImage* srcImage = new BitmapImage();
+	BOOL result = srcImage->Load24BitsBitmap(srcFilePath);
+	assert(result == TRUE);
 
 	const DWORD numColor = 5;
+	const char* blockColorNames[numColor] = {
+		"green",
+		"blue",
+		"purple",
+		"gray",
+		"ibory"
+	};
+	DWORD blockColors[numColor] = {
+		(DWORD)EColor::Green,
+		(DWORD)EColor::Blue,
+		(DWORD)EColor::Purple,
+		(DWORD)EColor::Gray,
+		(DWORD)EColor::Ibory 
+	};
 
-	const char* blockColorNames[numColor] = { "green", "blue", "purple", "gray", "ibory" };
-	DWORD blockColors[numColor] = { (DWORD)EColor::Green, (DWORD)EColor::Blue, (DWORD)EColor::Purple, (DWORD)EColor::Gray, (DWORD)EColor::Ibory};
-
-	char fileName[100];
-
-	BOOL result = srcImage->Load24BitsBitmap("./assets/redBlock.bmp");
-	assert(result == TRUE);
-	
 	BitmapImage* copied = new BitmapImage(srcImage);
 
 	for (DWORD i = 0; i < numColor; ++i)
 	{
-
 		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0xed, 0x1c, 0x24))
 				{
 					copied->SetPixel(x, y, blockColors[i]);
 				}
 			}
 		}
 
-		sprintf(fileName, "./assets/%sBlock.bmp", blockColorNames[i]);
+		sprintf(destFilePath, "./assets/%s%s", blockColorNames[i], destFileName);
+		Save24BitsBitmap(destFilePath, copied);
 
-		Save24BitsBitmap(fileName, copied);
+		memset(destFilePath, 0, 128);
 	}
 
+	delete srcImage;
 	delete copied;
+}
 
-	memset(fileName, 0, 100);
+BitmapImage * GetRotatedBitmap(BitmapImage* src)
+{
+	int width = src->GetHeight(); // indented
+	int height = src->GetWidth();
 
-	result = srcImage->Load24BitsBitmap("./assets/redBlock1.bmp");
-	assert(result == TRUE);
+	const DWORD* srcImage = (DWORD*)src->GetRawImage();
+	DWORD* destImage = (DWORD*)malloc(width * height * 4);
 
-	BitmapImage* copied2 = new BitmapImage(srcImage);
-
-	for (DWORD i = 0; i < numColor; ++i)
+	for (DWORD y = 0; y < height; ++y)
 	{
-
-		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
+		for (DWORD x = 0; x < width; ++x)
 		{
-			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
-			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
-				{
-					copied2->SetPixel(x, y, blockColors[i]);
-				}
-			}
+			destImage[y * width + x] = srcImage[(width - 1 - x) * src->GetWidth() + y];
 		}
-
-		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
-
-		Save24BitsBitmap(fileName, copied2);
 	}
 
-	delete copied2;
-
-	memset(fileName, 0, 100);
-
-	result = srcImage->Load24BitsBitmap("./assets/redBlock2.bmp");
-	assert(result == TRUE);
-
-	BitmapImage* copied3 = new BitmapImage(srcImage);
-
-	for (DWORD i = 0; i < numColor; ++i)
-	{
-
-		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
-		{
-			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
-			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
-				{
-					copied3->SetPixel(x, y, blockColors[i]);
-				}
-			}
-		}
-
-		sprintf(fileName, "./assets/%sBlock2.bmp", blockColorNames[i]);
-
-		Save24BitsBitmap(fileName, copied3);
-	}
-
-	delete copied3;
-
-	memset(fileName, 0, 100);
-
-	result = srcImage->Load24BitsBitmap("./assets/redBlock3.bmp");
-	assert(result == TRUE);
-
-	BitmapImage* copied4 = new BitmapImage(srcImage);
-
-	for (DWORD i = 0; i < numColor; ++i)
-	{
-
-		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
-		{
-			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
-			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
-				{
-					copied4->SetPixel(x, y, blockColors[i]);
-				}
-			}
-		}
-
-		sprintf(fileName, "./assets/%sBlock3.bmp", blockColorNames[i]);
-
-		Save24BitsBitmap(fileName, copied4);
-	}
-
-	delete copied4;
-
-	memset(fileName, 0, 100);
-
-	result = srcImage->Load24BitsBitmap("./assets/redBlock4.bmp");
-	assert(result == TRUE);
-
-	BitmapImage* copied5 = new BitmapImage(srcImage);
-
-	for (DWORD i = 0; i < numColor; ++i)
-	{
-
-		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
-		{
-			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
-			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
-				{
-					copied5->SetPixel(x, y, blockColors[i]);
-				}
-			}
-		}
-
-		sprintf(fileName, "./assets/%sBlock4.bmp", blockColorNames[i]);
-
-		Save24BitsBitmap(fileName, copied5);
-	}
-
-	delete copied5;
-
-	memset(fileName, 0, 100);
-
-	result = srcImage->Load24BitsBitmap("./assets/redBlock5.bmp");
-	assert(result == TRUE);
-
-	BitmapImage* copied6 = new BitmapImage(srcImage);
-
-	for (DWORD i = 0; i < numColor; ++i)
-	{
-
-		for (DWORD y = 0; y < srcImage->GetHeight(); ++y)
-		{
-			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
-			{
-				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
-				{
-					copied6->SetPixel(x, y, blockColors[i]);
-				}
-			}
-		}
-
-		sprintf(fileName, "./assets/%sBlock5.bmp", blockColorNames[i]);
-
-		Save24BitsBitmap(fileName, copied6);
-	}
-
-	delete copied6;
+	BitmapImage* dest = new BitmapImage(width, height, (char*)destImage);
+	return dest;
 }
