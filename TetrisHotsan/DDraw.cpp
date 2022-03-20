@@ -5,6 +5,44 @@ DDraw::DDraw()
 {
 }
 
+DDraw::~DDraw()
+{
+	if (mpDD != nullptr)
+	{
+		mpDD->Release();
+		mpDD = nullptr;
+	}
+
+	if (mpDD7 != nullptr)
+	{
+		mpDD7->Release();
+		mpDD7 = nullptr;
+	}
+
+	if (mpDDPrimary != nullptr)
+	{
+		mpDDPrimary->Release();
+		mpDDPrimary = nullptr;
+	}
+
+	if (mpDDBack != nullptr)
+	{
+		mpDDBack->Release();
+		mpDDBack = nullptr;
+	}
+
+	if (mpClipper != nullptr)
+	{
+		mpClipper->Release();
+	}
+
+	if (mpLockedBackBuffer != nullptr)
+	{
+		UnlockBackBuffer();
+		mpLockedBackBuffer = nullptr;
+	}
+}
+
 BOOL DDraw::Initialize(HWND hwnd)
 {
 	BOOL bResult = FALSE;
@@ -116,12 +154,15 @@ void DDraw::Blt()
 	mpDDPrimary->Blt(&mWindow, mpDDBack, nullptr, DDBLT_WAIT, nullptr);
 }
 
-BOOL DDraw::DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image)
+BOOL DDraw::DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image)
 {
 	assert(mpLockedBackBuffer != nullptr);
 
-	DWORD width = image->GetWidth();
-	DWORD height = image->GetHeight();
+	int x = xPos;
+	int y = yPos;
+	int width = image->GetWidth();
+	int height = image->GetHeight();
+
 	char* pBits = image->GetRawImage();
 	{
 		int startX = max(0, x);
@@ -133,8 +174,8 @@ BOOL DDraw::DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image)
 		int endX = max(x + width, 0);
 		endX = min(x + width, mWidth);
 
-		int endY = max(x + height, 0);
-		endY = min(x + height, mHeight);
+		int endY = max(y + height, 0);
+		endY = min(y + height, mHeight);
 
 		int newWidth = endX - startX;
 		int newHeight = endY - startY;
@@ -147,6 +188,72 @@ BOOL DDraw::DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image)
 		x = startX;
 		y = startY;
 
+		assert(newWidth <= width);
+		assert(newHeight <= height);
+
+		width = newWidth;
+		height = newHeight;
+	}
+
+	char* src = (char*)pBits;
+	char* dest = mpLockedBackBuffer + (y * mLockedBackBufferPitch) + x;
+
+	for (int y = 0; y < height; ++y)
+	{
+		for (DWORD x = 0; x < width; ++x)
+		{
+			*(DWORD*)dest = *(DWORD*)src;
+
+			dest += 4;
+			src += 4;
+		}
+
+		src -= (width * 4);
+		src += (width * 4);
+		dest -= (width * 4);
+		dest += mLockedBackBufferPitch;
+	}
+
+	return TRUE;
+}
+
+BOOL DDraw::DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage * image, DWORD colorKey)
+{
+	assert(mpLockedBackBuffer != nullptr);
+
+	int x = xPos;
+	int y = yPos;
+	int width = image->GetWidth();
+	int height = image->GetHeight();
+
+	char* pBits = image->GetRawImage();
+	{
+		int startX = max(0, x);
+		startX = min(mWidth, x);
+
+		int startY = max(0, y);
+		startY = min(mHeight, y);
+
+		int endX = max(x + width, 0);
+		endX = min(x + width, mWidth);
+
+		int endY = max(y + height, 0);
+		endY = min(y + height, mHeight);
+
+		int newWidth = endX - startX;
+		int newHeight = endY - startY;
+
+		if (newWidth <= 0 || newHeight <= 0)
+		{
+			return FALSE;
+		}
+
+		x = startX;
+		y = startY;
+
+		assert(newWidth <= width);
+		assert(newHeight <= height);
+
 		width = newWidth;
 		height = newHeight;
 	}
@@ -158,7 +265,10 @@ BOOL DDraw::DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image)
 	{
 		for (DWORD x = 0; x < width; ++x)
 		{
-			*(DWORD*)dest = *(DWORD*)src;
+			if (*(DWORD*)src != colorKey)
+			{
+				*(DWORD*)dest = *(DWORD*)src;
+			}
 
 			dest += 4;
 			src += 4;

@@ -28,6 +28,9 @@
     <Filter Include="소스 파일\Coord">
       <UniqueIdentifier>{b38a9a83-4d8e-43a5-bb6d-4f9baad7de66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Util">
+      <UniqueIdentifier>{c3bab0e2-d0a5-49ff-8217-dd2941a084f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -56,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="Coord.h">
       <Filter>소스 파일\Coord</Filter>
+    </ClInclude>
+    <ClInclude Include="RGBA.h">
+      <Filter>소스 파일\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

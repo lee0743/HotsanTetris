@@ -57,9 +57,9 @@ BOOL BitmapImage::Load24BitsBitmap(const char * fileName)
 		--line;
 		for (DWORD x = 0; x < width; ++x)
 		{
-			mpRawImage[line * widthBytes + x * 4 + 0] = temp[y * pitch + x * 3 + 2];
+			mpRawImage[line * widthBytes + x * 4 + 0] = temp[y * pitch + x * 3 + 0];
 			mpRawImage[line * widthBytes + x * 4 + 1] = temp[y * pitch + x * 3 + 1];
-			mpRawImage[line * widthBytes + x * 4 + 2] = temp[y * pitch + x * 3 + 0];
+			mpRawImage[line * widthBytes + x * 4 + 2] = temp[y * pitch + x * 3 + 2];
 			mpRawImage[line * widthBytes + x * 4 + 3] = (BYTE)255;
 		}
 	}
@@ -149,7 +149,7 @@ BOOL Save24BitsBitmap(const char * fileName, BitmapImage* src)
 	infoHeader.NumPlanes = (WORD)1;
 	infoHeader.BitsPerPixel = (WORD)24;
 	infoHeader.Compression = 0;
-	infoHeader.ImageSize = pitch * height * 3;
+	infoHeader.ImageSize = pitch * height;
 	infoHeader.HorizontalResolution = 0;
 	infoHeader.VerticalResolution = 0;
 	infoHeader.NumColor = 0;

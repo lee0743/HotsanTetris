@@ -7,9 +7,10 @@ Browse.VC.opendb
 ipch
 #ignore Debug folder created by Visual Studio
 Debug
-#ignore bitmap file except src bitmap
+#ignore bitmap file except src bitmap and map file
 *.bmp
 !redBlock*.bmp
+!map2.bmp
 #Ignore files build by Visual Studio
 *.obj
 *.exe

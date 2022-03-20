@@ -7,12 +7,14 @@ class DDraw
 {
 public:
 	DDraw();
+	~DDraw();
 	BOOL Initialize(HWND hwnd);
 	BOOL LockBackBuffer();
 	void UnlockBackBuffer();
 	void Blt();
 
-	BOOL DrawBitmapImage(DWORD x, DWORD y, BitmapImage* image);
+	BOOL DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image);
+	BOOL DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage* image, DWORD colorKey);
 private:
 	IDirectDraw* mpDD = nullptr;
 	IDirectDraw7* mpDD7 = nullptr;

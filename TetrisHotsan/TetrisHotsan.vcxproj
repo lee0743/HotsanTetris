@@ -160,6 +160,7 @@
     <ClInclude Include="BlockImage.h" />
     <ClInclude Include="Coord.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RGBA.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TetrisHotsan.h" />
   </ItemGroup>
