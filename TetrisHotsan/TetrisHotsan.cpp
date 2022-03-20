@@ -7,11 +7,12 @@
 #include <assert.h>
 
 #include "framework.h"
-#include "TetrisHotsan.h"
 #include "BitmapImage.h"
 #include "BlockImage.h"
 #include "Block.h"
 #include "DDraw.h"
+#include "RGBA.h"
+#include "TetrisHotsan.h"
 
 #define MAX_LOADSTRING 100
 
@@ -20,6 +21,15 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND gHWnd;
+
+// HACK: Will Fix Later
+BOOL canUseKeyDown = FALSE;
+ULONGLONG start_time;
+ULONGLONG end_time;
+DWORD interval_time;
+DWORD fps = 1;
+DWORD y = 0;
+DWORD x = 0;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -59,37 +69,89 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	SaveBlocksToAssets();
 
-	// BlockImage* redBlockImage = nullptr;
-	BitmapImage* blockBmpImage = new BitmapImage();
-
-	if (TRUE == blockBmpImage->Load24BitsBitmap("./assets/redBlock1.bmp"))
+	BitmapImage* backGround = new BitmapImage();
+	if (backGround->Load24BitsBitmap("./assets/map2.bmp") == false)
 	{
-		// DWORD colorKey = blockBmpImage->GetPixel(0, 0);
+		__debugbreak();
+	}
 
-		// redBlockImage = new BlockImage();
-		// redBlockImage->Create(blockBmpImage->GetRawImage(), blockBmpImage->GetWidth(), blockBmpImage->GetHeight(), colorKey);
+	BitmapImage* block1 = new BitmapImage();
+	if (block1->Load24BitsBitmap("./assets/redBlock1.bmp") == false)
+	{
+		__debugbreak();
+	}
 
+	BitmapImage* block2 = new BitmapImage();
+	if (block2->Load24BitsBitmap("./assets/blueBlock5.bmp") == false)
+	{
+		__debugbreak();
+	}
+
+	{
 		pDDraw->LockBackBuffer();
 		{
-			pDDraw->DrawBitmapImage(50, 50, blockBmpImage);
-			pDDraw->DrawBitmapImage(300, 300, blockBmpImage);
+			pDDraw->DrawBitmapImage(0, 0, backGround);
+
+			DWORD colorKey = MakeRGBA(0xff, 0x00, 0xff);
+			pDDraw->DrawBitmapImageWithColorKey(x, y, block1, colorKey);
+			pDDraw->DrawBitmapImageWithColorKey(91, y, block2, colorKey);
 		}
 		pDDraw->UnlockBackBuffer();
 		pDDraw->Blt();
-	}
 
-	delete blockBmpImage;
+		y += 22;
+	}
+	
+	start_time= GetTickCount64();
+	canUseKeyDown = TRUE;
 
 	// 기본 메시지 루프입니다:
-	while (GetMessage(&msg, nullptr, 0, 0))
+	while (TRUE)
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		end_time = GetTickCount64();
+		interval_time = (end_time - start_time) / 1000;
+
+		if (TRUE == PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+		else
+		{
+			if (interval_time >= fps)
+			{
+				start_time = GetTickCount64();
+				canUseKeyDown = TRUE;
+
+				pDDraw->LockBackBuffer();
+				{
+					pDDraw->DrawBitmapImage(0, 0, backGround);
+
+					DWORD colorKey = MakeRGBA(0xff, 0x00, 0xff);
+					pDDraw->DrawBitmapImageWithColorKey(x, y, block1, colorKey);
+					pDDraw->DrawBitmapImageWithColorKey(92, y, block2, colorKey);
+				}
+				pDDraw->UnlockBackBuffer();
+				pDDraw->Blt();
+
+				y += 22;
+			}
+
+			if (y >= backGround->GetHeight())
+			{
+				break;
+			}
 		}
 	}
 
+	delete backGround;
+	delete block1;
+	delete block2;
+
+	delete pDDraw;
 	return (int)msg.wParam;
 }
 
@@ -190,6 +252,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 	}
 	break;
+	case WM_KEYDOWN:
+	{
+		if (canUseKeyDown)
+		{
+			if (wParam == VK_UP)
+			{
+				y -= 22;
+			}
+			else if (wParam == VK_DOWN)
+			{
+				y += 22;
+			}
+			else if (wParam == VK_RIGHT)
+			{
+				x += 92;
+			}
+			else if (wParam == VK_LEFT)
+			{
+				x -= 92;
+			}
+
+			canUseKeyDown = FALSE;
+		}
+	}
+	break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -223,16 +310,16 @@ static void SaveBlocksToAssets()
 {	// WARNING: FUCKING CODE
 	BitmapImage* srcImage = new BitmapImage();
 
-	BOOL result = srcImage->Load24BitsBitmap("./assets/redBlock.bmp");
-	assert(result == TRUE);
-
 	const DWORD numColor = 5;
 
 	const char* blockColorNames[numColor] = { "green", "blue", "purple", "gray", "ibory" };
-	DWORD blockColors[numColor] = { 0xff00ff00, 0xffff0000, 0xffff0080, 0xff808080, 0xffe7bfc8 };
+	DWORD blockColors[numColor] = { (DWORD)EColor::Green, (DWORD)EColor::Blue, (DWORD)EColor::Purple, (DWORD)EColor::Gray, (DWORD)EColor::Ibory};
 
 	char fileName[100];
 
+	BOOL result = srcImage->Load24BitsBitmap("./assets/redBlock.bmp");
+	assert(result == TRUE);
+	
 	BitmapImage* copied = new BitmapImage(srcImage);
 
 	for (DWORD i = 0; i < numColor; ++i)
@@ -242,7 +329,7 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied->SetPixel(x, y, blockColors[i]);
 				}
@@ -270,7 +357,7 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied2->SetPixel(x, y, blockColors[i]);
 				}
@@ -298,14 +385,14 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied3->SetPixel(x, y, blockColors[i]);
 				}
 			}
 		}
 
-		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+		sprintf(fileName, "./assets/%sBlock2.bmp", blockColorNames[i]);
 
 		Save24BitsBitmap(fileName, copied3);
 	}
@@ -326,7 +413,7 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied4->SetPixel(x, y, blockColors[i]);
 				}
@@ -354,14 +441,14 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied5->SetPixel(x, y, blockColors[i]);
 				}
 			}
 		}
 
-		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+		sprintf(fileName, "./assets/%sBlock4.bmp", blockColorNames[i]);
 
 		Save24BitsBitmap(fileName, copied5);
 	}
@@ -382,14 +469,14 @@ static void SaveBlocksToAssets()
 		{
 			for (DWORD x = 0; x < srcImage->GetWidth(); ++x)
 			{
-				if (srcImage->GetPixel(x, y) == 0xff241ced)
+				if (srcImage->GetPixel(x, y) == MakeRGBA(0x24, 0x1c, 0xed))
 				{
 					copied6->SetPixel(x, y, blockColors[i]);
 				}
 			}
 		}
 
-		sprintf(fileName, "./assets/%sBlock1.bmp", blockColorNames[i]);
+		sprintf(fileName, "./assets/%sBlock5.bmp", blockColorNames[i]);
 
 		Save24BitsBitmap(fileName, copied6);
 	}
