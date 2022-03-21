@@ -1,41 +1,14 @@
 #include "Block.h"
 
-Block::Block()
+Block MakeRandomBlock(int x, int y)
 {
-}
+	Block block;
+	{
+		block.pos.X = x;
+		block.pos.Y = y;
+		block.BlockType = (EBlockType)(rand() % EBlockTypeCount);
+		block.RotateCount = 0;
+	}
 
-Block::~Block()
-{
-}
-
-Point Block::GetPos() const
-{
-	return mPositon;
-}
-
-void Block::GetPos(int * outX, int * outY) const
-{
-	*outX = mPositon.X;
-	*outY = mPositon.Y;
-}
-
-void Block::SetPos(Point point)
-{
-	mPositon = point;
-}
-
-void Block::SetPos(int x, int y)
-{
-	mPositon.X = x;
-	mPositon.Y = y;
-}
-
-BlockImage * Block::GetImage()
-{
-	return mImage;
-}
-
-void Block::SetImage(BlockImage * Image)
-{
-	mImage = Image;
+	return block;
 }

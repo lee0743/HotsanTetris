@@ -1,22 +1,14 @@
 #pragma once
 
-#include "BlockImage.h"
 #include "Coord.h"
+#include "EBlockType.h"
 
-class Block
+
+struct Block
 {
-public:
-	Block();
-	~Block();
-
-	Point GetPos() const;
-	void GetPos(int* outX, int* outY) const;
-	void SetPos(Point point);
-	void SetPos(int x, int y);
-	BlockImage* GetImage();
-	void SetImage(BlockImage* Image);
-private:
-	Point mPositon = { 0, };
-	BlockImage* mImage = nullptr;
+	Point pos;
+	EBlockType BlockType;
+	int RotateCount = 0;
 };
 
+Block MakeRandomBlock(int x, int y);

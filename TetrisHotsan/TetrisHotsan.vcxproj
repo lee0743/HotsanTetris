@@ -156,12 +156,14 @@
     <ClInclude Include="BitmapImage.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="DDraw.h" />
+    <ClInclude Include="EBlockType.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="BlockImage.h" />
     <ClInclude Include="Coord.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RGBA.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tetris.h" />
     <ClInclude Include="TetrisHotsan.h" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +171,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="DDraw.cpp" />
     <ClCompile Include="BlockImage.cpp" />
+    <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisHotsan.cpp" />
   </ItemGroup>
   <ItemGroup>

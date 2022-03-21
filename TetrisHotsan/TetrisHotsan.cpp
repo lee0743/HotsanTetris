@@ -13,6 +13,7 @@
 #include "DDraw.h"
 #include "RGBA.h"
 #include "TetrisHotsan.h"
+#include "Tetris.h"
 
 #define MAX_LOADSTRING (100)
 #define MILLISECOND_TO_SECOND (1000)
@@ -29,9 +30,6 @@ BOOL canUseKeyDown = FALSE;
 ULONGLONG start_time;
 ULONGLONG end_time;
 DWORD interval_time;
-DWORD fps = 1;
-DWORD y = 0;
-DWORD x = 0;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -68,46 +66,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	DDraw* pDDraw = new DDraw();
-	pDDraw->Initialize(gHWnd);
+	Tetris* tetris = new Tetris;
+	tetris->Initialize(gHWnd);
 
-	SaveBlocksToAssets();
-
-	BitmapImage* backGround = new BitmapImage();
-	if (backGround->Load24BitsBitmap("./assets/map2.bmp") == false)
-	{
-		__debugbreak();
-	}
-
-	BitmapImage* block1 = new BitmapImage();
-	if (block1->Load24BitsBitmap("./assets/redBlock1.bmp") == false)
-	{
-		__debugbreak();
-	}
-
-	BitmapImage* block2 = new BitmapImage();
-	if (block2->Load24BitsBitmap("./assets/blueBlock5.bmp") == false)
-	{
-		__debugbreak();
-	}
-
-	{
-		pDDraw->LockBackBuffer();
-		{
-			pDDraw->DrawBitmapImage(0, 0, backGround);
-
-			DWORD colorKey = MakeRGBA(0xff, 0x00, 0xff);
-			pDDraw->DrawBitmapImageWithColorKey(x, y, block1, colorKey);
-			pDDraw->DrawBitmapImageWithColorKey(91, y, block2, colorKey);
-		}
-		pDDraw->UnlockBackBuffer();
-		pDDraw->Blt();
-
-		y += 22;
-	}
-	
 	start_time= GetTickCount64();
 	canUseKeyDown = TRUE;
+
+	bool blockStopped = false;
 
 	// 기본 메시지 루프입니다:
 	while (TRUE)
@@ -125,37 +90,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
-			if (interval_time >= fps)
+			if (interval_time >= tetris->fps)
 			{
 				start_time = GetTickCount64();
 				canUseKeyDown = TRUE;
 
-				pDDraw->LockBackBuffer();
-				{
-					pDDraw->DrawBitmapImage(0, 0, backGround);
-
-					DWORD colorKey = MakeRGBA(0xff, 0x00, 0xff);
-					pDDraw->DrawBitmapImageWithColorKey(x, y, block1, colorKey);
-					pDDraw->DrawBitmapImageWithColorKey(92, y, block2, colorKey);
-				}
-				pDDraw->UnlockBackBuffer();
-				pDDraw->Blt();
-
-				y += 22;
-			}
-
-			if (y >= backGround->GetHeight())
-			{
-				break;
+				tetris->DrawScene();
 			}
 		}
 	}
 
-	delete backGround;
-	delete block1;
-	delete block2;
-
-	delete pDDraw;
+	delete tetris;
 	return (int)msg.wParam;
 }
 
@@ -260,23 +205,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (canUseKeyDown)
 		{
-			if (wParam == VK_UP)
-			{
-				y -= 22;
-			}
-			else if (wParam == VK_DOWN)
-			{
-				y += 22;
-			}
-			else if (wParam == VK_RIGHT)
-			{
-				x += 92;
-			}
-			else if (wParam == VK_LEFT)
-			{
-				x -= 92;
-			}
-
 			canUseKeyDown = FALSE;
 		}
 	}

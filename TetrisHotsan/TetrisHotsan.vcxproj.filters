@@ -22,14 +22,14 @@
     <Filter Include="소스 파일\BmpImg">
       <UniqueIdentifier>{91bc74e8-6b57-4308-b138-ffe6ea242d18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Block">
-      <UniqueIdentifier>{e6a921de-997e-4912-93e1-f327c64f67c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Coord">
       <UniqueIdentifier>{b38a9a83-4d8e-43a5-bb6d-4f9baad7de66}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Util">
       <UniqueIdentifier>{c3bab0e2-d0a5-49ff-8217-dd2941a084f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Tetris">
+      <UniqueIdentifier>{e21fcb4c-79da-41de-b4ec-f7910d7ec26f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,17 +51,23 @@
     <ClInclude Include="TetrisHotsan.h">
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
-    <ClInclude Include="BlockImage.h">
-      <Filter>소스 파일\Block</Filter>
-    </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>소스 파일\Block</Filter>
-    </ClInclude>
     <ClInclude Include="Coord.h">
       <Filter>소스 파일\Coord</Filter>
     </ClInclude>
     <ClInclude Include="RGBA.h">
       <Filter>소스 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Tetris.h">
+      <Filter>소스 파일\Tetris</Filter>
+    </ClInclude>
+    <ClInclude Include="EBlockType.h">
+      <Filter>소스 파일\Tetris</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>소스 파일\Tetris</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockImage.h">
+      <Filter>소스 파일\Tetris</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,11 +80,14 @@
     <ClCompile Include="TetrisHotsan.cpp">
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
+    <ClCompile Include="Tetris.cpp">
+      <Filter>소스 파일\Tetris</Filter>
+    </ClCompile>
     <ClCompile Include="BlockImage.cpp">
-      <Filter>소스 파일\Block</Filter>
+      <Filter>소스 파일\Tetris</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
-      <Filter>소스 파일\Block</Filter>
+      <Filter>소스 파일\Tetris</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
