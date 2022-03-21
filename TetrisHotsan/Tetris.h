@@ -14,7 +14,9 @@ public:
 
 	void Initialize(HWND hwnd);
 	void DrawScene();
-	DWORD fps = 1;
+	void Update();
+	Block* GetBlock();
+	double fps = 1;
 private:
 	enum {
 		MAP_WIDTH = 10,
@@ -85,3 +87,4 @@ private:
 
 };
 
+extern Tetris* gpTetris;

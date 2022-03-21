@@ -164,14 +164,14 @@ BOOL DDraw::DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image)
 	int height = image->GetHeight();
 
 	char* pBits = image->GetRawImage();
-
+	/*
 	if (FALSE == CalcClipArea(&x, &y, &width, &height))
 	{
 		__debugbreak();
 	}
-
+	*/
 	char* src = (char*)pBits;
-	char* dest = mpLockedBackBuffer + (y * mLockedBackBufferPitch) + x;
+	char* dest = mpLockedBackBuffer + (y * mLockedBackBufferPitch) + (x * 4);
 
 	for (int y = 0; y < height; ++y)
 	{

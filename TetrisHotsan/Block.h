@@ -7,7 +7,7 @@
 struct Block
 {
 	Point pos;
-	EBlockType BlockType;
+	EBlockType BlockType = (EBlockType)0;
 	int RotateCount = 0;
 };
 

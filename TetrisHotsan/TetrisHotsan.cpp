@@ -29,7 +29,7 @@ HWND gHWnd;
 BOOL canUseKeyDown = FALSE;
 ULONGLONG start_time;
 ULONGLONG end_time;
-DWORD interval_time;
+double interval_time;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -66,8 +66,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	Tetris* tetris = new Tetris;
-	tetris->Initialize(gHWnd);
+	Tetris* gpTetris = new Tetris;
+	gpTetris->Initialize(gHWnd);
 
 	start_time= GetTickCount64();
 	canUseKeyDown = TRUE;
@@ -90,17 +90,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
-			if (interval_time >= tetris->fps)
+			if (interval_time >= gpTetris->fps)
 			{
 				start_time = GetTickCount64();
 				canUseKeyDown = TRUE;
 
-				tetris->DrawScene();
+				gpTetris->DrawScene();
+			}
+			else
+			{
+				gpTetris->Update();
 			}
 		}
 	}
 
-	delete tetris;
+	delete gpTetris;
 	return (int)msg.wParam;
 }
 
