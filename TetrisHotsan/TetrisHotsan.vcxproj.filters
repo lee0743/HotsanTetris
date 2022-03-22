@@ -69,6 +69,9 @@
     <ClInclude Include="BlockImage.h">
       <Filter>소스 파일\Tetris</Filter>
     </ClInclude>
+    <ClInclude Include="TickCounter.h">
+      <Filter>소스 파일\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitmapImage.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="Block.cpp">
       <Filter>소스 파일\Tetris</Filter>
+    </ClCompile>
+    <ClCompile Include="TickCounter.cpp">
+      <Filter>소스 파일\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

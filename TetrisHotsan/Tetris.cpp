@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Tetris.h"
+#include "TickCounter.h"
 
 Tetris* gpTetris = nullptr;
 
@@ -41,12 +42,6 @@ void Tetris::Initialize(HWND hwnd)
 	mCell = new BitmapImage();
 	mCell->Load24BitsBitmap("./assets/redBlockGradient.bmp");
 	mBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
-	/*
-	for (int i = 0; i < 30; ++i)
-	{
-		mbMap[rand() % (MAP_HEIGHT - 10) + 10][rand() % MAP_WIDTH] = true;
-	}
-	*/
 }
 
 void Tetris::DrawScene()
@@ -55,8 +50,8 @@ void Tetris::DrawScene()
 	{
 		mpDDraw->DrawBitmapImage(0, 0, mBackgroundImage);
 		
-		DWORD cellWidth = mCell->GetWidth();
-		DWORD cellHeight = mCell->GetHeight();
+		const DWORD cellWidth = mCell->GetWidth();
+		const DWORD cellHeight = mCell->GetHeight();
 
 		for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 		{
@@ -66,59 +61,19 @@ void Tetris::DrawScene()
 			mpDDraw->DrawBitmapImage(absPosX * cellWidth + 1, absPosY * cellHeight + 1, mCell);
 		}
 
+		const DWORD startX = 1;
+		const DWORD startY = 1;
+
 		for (DWORD y = 0; y < MAP_HEIGHT; ++y)
 		{
 			for (DWORD x = 0; x < MAP_WIDTH; ++x)
 			{
 				if (mbMap[y][x] == true)
 				{
-					mpDDraw->DrawBitmapImage(x * cellWidth + 1, y * cellHeight + 1, mCell); // +1 to avoid border
+					mpDDraw->DrawBitmapImage(startX + x * cellWidth,  startY + y * cellHeight, mCell); // +1 to avoid border
 				}
 			}
 		}
-		
-		mBlock.pos.Y += 1;
-
-		int randrandNum = (rand() % 3);
-
-		if (randrandNum == 0 || randrandNum == 1)
-		{
-			int randomNum = (rand() % 3) - 1;
-			bool canMove = true;
-
-			for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-				int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].X;
-				int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].Y;
-
-				if (true == mbMap[absPosY][absPosX + randomNum] || MAP_WIDTH <= mbMap[absPosY][absPosX + randomNum] || 0 > mbMap[absPosY][absPosX + randomNum]) {
-					canMove = false;
-				}
-			}
-
-			if (canMove)
-			{
-				mBlock.pos.X += randomNum;
-			}
-		}
-		else
-		{
-			bool canMove = true;
-
-			for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-				int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][(mBlock.RotateCount + 1) % 4][i].X;
-				int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][(mBlock.RotateCount + 1) % 4][i].Y;
-
-				if (true == mbMap[absPosY][absPosX] || MAP_WIDTH <= mbMap[absPosY][absPosX] || 0 > mbMap[absPosY][absPosX]) {
-					canMove = false;
-				}
-			}
-
-			if (canMove)
-			{
-				mBlock.RotateCount = (mBlock.RotateCount + 1) % 4;
-			}
-		}
-		
 	}
 	mpDDraw->UnlockBackBuffer();
 	mpDDraw->Blt();
@@ -126,21 +81,15 @@ void Tetris::DrawScene()
 
 void Tetris::Update()
 {
-	for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-		int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].X;
-		int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].Y;
+	DWORD elapsedMillisecond = GetElaspedMillisecond();
+	InitTickCounter();
 
-		if (absPosY + 1 > 22 || true == mbMap[absPosY][absPosX]) {
-			for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-				int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].X;
-				int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].Y - 1;
-
-				mbMap[absPosY][absPosX] = true;
-			}
-
-			mBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
-		}
+	if (elapsedMillisecond >= 1000)
+	{
+		mBlock.pos.Y += 1;
 	}
+
+	DrawScene();
 }
 
 Block * Tetris::GetBlock()

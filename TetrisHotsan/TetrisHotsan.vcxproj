@@ -165,6 +165,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tetris.h" />
     <ClInclude Include="TetrisHotsan.h" />
+    <ClInclude Include="TickCounter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitmapImage.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="BlockImage.cpp" />
     <ClCompile Include="Tetris.cpp" />
     <ClCompile Include="TetrisHotsan.cpp" />
+    <ClCompile Include="TickCounter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TetrisHotsan.rc" />
