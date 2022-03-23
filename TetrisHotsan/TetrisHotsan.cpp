@@ -57,12 +57,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	Tetris* gpTetris = new Tetris();
+	gpTetris->Initialize(gHWnd);
+
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TETRISHOTSAN));
 
 	MSG msg;
-
-	Tetris* gpTetris = new Tetris;
-	gpTetris->Initialize(gHWnd);
 
 	InitTickCounter();
 
@@ -79,7 +79,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else
 		{
-			gpTetris->Update();
+			gpTetris->Process();
 		}
 	}
 
@@ -184,14 +184,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 	}
 	break;
+	case WM_KEYDOWN:
+		gpTetris->OnKeyDown(wParam, lParam);
+		break;
 	case WM_KEYUP:
-	{
-		if (canUseKeyDown)
-		{
-			canUseKeyDown = FALSE;
-		}
-	}
-	break;
+		gpTetris->OnKeyUp(wParam, lParam);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

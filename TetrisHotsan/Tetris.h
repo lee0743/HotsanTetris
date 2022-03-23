@@ -13,10 +13,12 @@ public:
 	~Tetris();
 
 	void Initialize(HWND hwnd);
-	void DrawScene();
+	void Process();
 	void Update();
-	Block* GetBlock();
-	double fps = 1;
+	void DrawScene();
+	void OnKeyDown(WPARAM wParam, LPARAM lParam);
+	void OnKeyUp(WPARAM wParam, LPARAM lParam);
+
 private:
 	enum {
 		MAP_WIDTH = 10,
@@ -29,62 +31,15 @@ private:
 	BitmapImage* mCell = nullptr;
 	BitmapImage* mBackgroundImage = nullptr;
 
+	double fps = 1;
 	BOOL blockStopped = false;
 	Block mBlock;
-	bool mbMap[MAP_HEIGHT][MAP_WIDTH] = { 0, };
+	BOOL mbMap[MAP_HEIGHT][MAP_WIDTH] = { 0, };
 	unsigned int mSeed = 0;
 
-	Point blockVertexArray[EBlockTypeCount][4][4] = {
-	{ // L Shape 
-		{ Point{0, 0}, Point{0, 1}, Point{0, 2}, Point{1, 2} },
-		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{0, 1} },
-		{ Point{0, 0}, Point{1, 0}, Point{1, 1}, Point{1, 2} },
-		{ Point{2, 0}, Point{0, 1}, Point{1, 1}, Point{2, 1} }
-	},
-
-	{ // T Shape
-		{ Point{1, 0}, Point{0, 1}, Point{1, 1}, Point{2, 1} },
-		{ Point{0, 0}, Point{0, 1}, Point{1, 1}, Point{0, 2} },
-		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{1, 1} },
-		{ Point{1, 0}, Point{0, 1}, Point{1, 1}, Point{1, 2} }
-	},
-
-	{ // O Shape
-		{ Point{0, 0}, Point{1, 0}, Point{0, 1}, Point{1, 1} },
-		{ Point{0, 0}, Point{1, 0}, Point{0, 1}, Point{1, 1} },
-		{ Point{0, 0}, Point{1, 0}, Point{0, 1}, Point{1, 1} },
-		{ Point{0, 0}, Point{1, 0}, Point{0, 1}, Point{1, 1} }
-	},
-
-	{ // Z Shape
-		{ Point{0, 0}, Point{1, 0}, Point{1, 1}, Point{2, 1} },
-		{ Point{1, 0}, Point{0, 1}, Point{1, 1}, Point{0, 2} },
-		{ Point{0, 0}, Point{1, 0}, Point{1, 1}, Point{2, 1} },
-		{ Point{1, 0}, Point{0, 1}, Point{1, 1}, Point{0, 2} }
-	},
-
-	{ // InvL Shape
-		{ Point{1, 0}, Point{1, 1}, Point{0, 2}, Point{1, 2} },
-		{ Point{0, 0}, Point{0, 1}, Point{1, 1}, Point{2, 1} },
-		{ Point{0, 0}, Point{1, 0}, Point{0, 1}, Point{0, 2} },
-		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{2, 1} }
-	},
-
-	{ // InvZ Shape
-		{ Point{1, 0}, Point{2, 0}, Point{0, 1}, Point{1, 1} },
-		{ Point{0, 0}, Point{0, 1}, Point{1, 1}, Point{1, 2} },
-		{ Point{1, 0}, Point{2, 0}, Point{0, 1}, Point{1, 1} },
-		{ Point{0, 0}, Point{0, 1}, Point{1, 1}, Point{1, 2} }
-	},
-
-	{ // I Shape
-		{ Point{0, 0}, Point{0, 1}, Point{0, 2}, Point{0, 3} },
-		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{3, 0} },
-		{ Point{0, 0}, Point{0, 1}, Point{0, 2}, Point{0, 3} },
-		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{3, 0} }
-	}
-	};
-
+	BOOL mKeyUpPressed = false;
+	BOOL mKeyRightPressed = false;
+	BOOL mkeyLeftPressed = false;
 };
 
 extern Tetris* gpTetris;
