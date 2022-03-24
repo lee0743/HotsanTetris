@@ -36,33 +36,44 @@ void Tetris::Initialize(HWND hwnd)
 	mSeed = time(nullptr);
 	srand(mSeed);
 
-	mBackgroundImage = new BitmapImage();
+	mBackgroundImage = new BitmapImage;
 	mBackgroundImage->Load24BitsBitmap("./assets/map2.bmp");
 
-	mCell = new BitmapImage();
+	mCell = new BitmapImage;
 	mCell->Load24BitsBitmap("./assets/redBlockGradient.bmp");
+
 	mBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
+
+	::InitTickCounter(&mblockDownOrStopMilliseconds);
+	::InitTickCounter(&mFPSMilliseconds);
 }
 
 void Tetris::Process()
 {
-	DWORD elapsedMillisecond = GetElaspedMillisecond();
+	DWORD mFPSElasped = ::GetElaspedMillisecond(&mFPSMilliseconds);
+	DWORD mblockDownOrStopElasped = ::GetElaspedMillisecond(&mblockDownOrStopMilliseconds);
 
-	if (elapsedMillisecond >= 300)
+	if (mblockDownOrStopElasped >= 1000)
 	{
-		InitTickCounter();
+		::InitTickCounter(&mblockDownOrStopMilliseconds);
+		
+		mShouldBlockDownOrStop = TRUE;
 		Update();
 	}
-	
+
+	if (mFPSElasped >= 30)
+	{
+		::InitTickCounter(&mFPSMilliseconds);
+		Update();
+	}
+
 	DrawScene();
 }
 
 void Tetris::Update()
 {
-	DWORD rotatedAbsPosX = 0;
-	DWORD rotatedAbsPosY = 0;
-	DWORD absPosX = 0;
-	DWORD absPosY = 0;
+	int absPosX = 0;
+	int absPosY = 0;
 
 	BOOL bCanRotate = TRUE;
 	BOOL bCanMoveRight = TRUE;
@@ -72,20 +83,20 @@ void Tetris::Update()
 	{
 		::GetBlockAbsCoord(&mBlock, i, &absPosX, &absPosY);
 
-		if (absPosX + 1 <= MAP_WIDTH || true == mbMap[absPosY][absPosX + 1])
+		if (absPosX + 1 >= MAP_WIDTH || true == mbMap[absPosY][absPosX + 1])
 		{
 			bCanMoveRight = FALSE;
 		}
 
-		if (absPosX - 1 > 0 || true == mbMap[absPosY][absPosX - 1])
+		if ((int)absPosX - 1 < 0 || true == mbMap[absPosY][absPosX - 1])
 		{
-			bCanMoveRight = FALSE;
+			bCanMoveLeft = FALSE;
 		}
 	}
 
 	if (mKeyUpPressed)
 	{
-			mBlock.RotateCount += 1;
+		mBlock.RotateCount == 3 ? mBlock.RotateCount = 0 : mBlock.RotateCount++;
 	}
 
 	if (mKeyRightPressed && bCanMoveRight)
@@ -93,9 +104,31 @@ void Tetris::Update()
 		mBlock.pos.X += 1;
 	}
 
-	if (mkeyLeftPressed && bCanMoveLeft)
+	if (mKeyLeftPressed && bCanMoveLeft)
 	{
 		mBlock.pos.X -= 1;
+	}
+
+	if (mShouldBlockDownOrStop)
+	{
+		BOOL bCanBlockDown = TRUE;
+
+		for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
+		{
+			::GetBlockAbsCoord(&mBlock, i, &absPosX, &absPosY);
+
+			if (absPosY + 1 >= MAP_HEIGHT || true == mbMap[absPosY + 1][absPosX])
+			{
+				bCanBlockDown = FALSE;
+			}
+		}
+
+		if (bCanBlockDown)
+		{
+			mBlock.pos.Y += 1;
+		}
+
+		mShouldBlockDownOrStop = false;
 	}
 }
 
@@ -110,8 +143,8 @@ void Tetris::DrawScene()
 
 		for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 		{
-			DWORD absPosX = 0;
-			DWORD absPosY = 0;
+			int absPosX = 0;
+			int absPosY = 0;
 
 			::GetBlockAbsCoord(&mBlock, i, &absPosX, &absPosY);
 
@@ -144,7 +177,7 @@ void Tetris::OnKeyDown(WPARAM wParam, LPARAM lParam)
 		mKeyUpPressed = true;
 		break;
 	case VK_LEFT:
-		mkeyLeftPressed = true;
+		mKeyLeftPressed = true;
 		break;
 	case VK_RIGHT:
 		mKeyRightPressed = true;
@@ -161,10 +194,10 @@ void Tetris::OnKeyUp(WPARAM wParam, LPARAM lParam)
 		mKeyUpPressed = false;
 		break;
 	case VK_LEFT:
-		mkeyLeftPressed = false;
+		mKeyLeftPressed = false;
 		break;
 	case VK_RIGHT:
-		mkeyRightPressed = false;
+		mKeyRightPressed = false;
 	default:
 		break;
 	}

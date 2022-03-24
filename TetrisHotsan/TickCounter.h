@@ -2,7 +2,5 @@
 
 #include <Windows.h>
 
-static ULONGLONG startMilliseconds;
-
-void InitTickCounter();
-DWORD GetElaspedMillisecond();
+void InitTickCounter(ULONGLONG* startMilliseconds);
+DWORD GetElaspedMillisecond(ULONGLONG* startMilliseconds);

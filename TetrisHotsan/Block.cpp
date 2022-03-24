@@ -64,7 +64,7 @@ Block MakeRandomBlock(int x, int y)
 	return block;
 }
 
-void GetBlockAbsCoord(const Block* block, DWORD vertexIndex, DWORD * outX, DWORD * outY)
+void GetBlockAbsCoord(const Block* block, DWORD vertexIndex, int* outX, int* outY)
 {
 	int absPosX = block->pos.X + blockVertexArray[block->BlockType][block->RotateCount][vertexIndex].X;
 	int absPosY = block->pos.Y + blockVertexArray[block->BlockType][block->RotateCount][vertexIndex].Y;

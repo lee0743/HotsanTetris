@@ -12,4 +12,4 @@ struct Block
 };
 
 Block MakeRandomBlock(int x, int y);
-void GetBlockAbsCoord(const Block* block, DWORD vertexIndex, DWORD* outX, DWORD* outY);
+void GetBlockAbsCoord(const Block* block, DWORD vertexIndex, int* outX, int* outY);

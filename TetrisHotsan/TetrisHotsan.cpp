@@ -5,6 +5,7 @@
 //
 #include <stdio.h>
 #include <assert.h>
+#include <crtdbg.h>
 
 #include "framework.h"
 #include "BitmapImage.h"
@@ -41,6 +42,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -56,20 +61,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	{
 		return FALSE;
 	}
-
-	Tetris* gpTetris = new Tetris();
-	gpTetris->Initialize(gHWnd);
-
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TETRISHOTSAN));
 
 	MSG msg;
 
-	InitTickCounter();
+	gpTetris = new Tetris;
+	gpTetris->Initialize(gHWnd);
 
 	// 기본 메시지 루프입니다:
 	while (TRUE)
 	{
-		if (TRUE == PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		BOOL bHasMessage = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
+
+		if (TRUE == bHasMessage)
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
@@ -83,7 +87,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 
-	delete gpTetris;
+	if (nullptr != gpTetris)
+	{
+		delete gpTetris;
+		gpTetris = nullptr;
+	}
+
+#ifdef _DEBUG
+	_ASSERT(_CrtCheckMemory());
+#endif
 	return (int)msg.wParam;
 }
 
@@ -157,6 +169,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
 	switch (message)
 	{
 	case WM_COMMAND:
@@ -185,11 +198,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_KEYDOWN:
-		gpTetris->OnKeyDown(wParam, lParam);
-		break;
+	{
+		if (nullptr != gpTetris)
+		{
+			gpTetris->OnKeyDown(wParam, lParam);
+		}
+	}
+	break;
 	case WM_KEYUP:
-		gpTetris->OnKeyUp(wParam, lParam);
-		break;
+	{
+		if (nullptr != gpTetris)
+		{
+			gpTetris->OnKeyUp(wParam, lParam);
+		}
+	}
+	break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

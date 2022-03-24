@@ -2,13 +2,13 @@
 
 #include "TickCounter.h"
 
-void InitTickCounter()
+void InitTickCounter(ULONGLONG* startMilliseconds)
 {
-	startMilliseconds = GetTickCount64();
+	*startMilliseconds = GetTickCount64();
 }
 
-DWORD GetElaspedMillisecond()
+DWORD GetElaspedMillisecond(ULONGLONG* startMilliseconds)
 {
 	ULONGLONG endTimeMilliseconds = GetTickCount64();
-	return endTimeMilliseconds - startMilliseconds;
+	return endTimeMilliseconds - *startMilliseconds;
 }

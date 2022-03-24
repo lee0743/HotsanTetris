@@ -39,7 +39,12 @@ private:
 
 	BOOL mKeyUpPressed = false;
 	BOOL mKeyRightPressed = false;
-	BOOL mkeyLeftPressed = false;
+	BOOL mKeyLeftPressed = false;
+
+	DWORD mShouldBlockDownOrStop = false;
+
+	ULONGLONG mblockDownOrStopMilliseconds = 0;
+	ULONGLONG mFPSMilliseconds = 0;
 };
 
 extern Tetris* gpTetris;
