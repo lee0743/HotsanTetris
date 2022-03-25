@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include <time.h>
 #include <stdlib.h>
 
@@ -44,24 +45,30 @@ void Tetris::Initialize(HWND hwnd)
 
 	mBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
 
-	::InitTickCounter(&mblockDownOrStopMilliseconds);
+	::InitTickCounter(&mBlockDownOrStopMilliseconds);
 	::InitTickCounter(&mFPSMilliseconds);
+	::InitTickCounter(&mKeyDownMilliseconds);
 }
 
 void Tetris::Process()
 {
-	DWORD mFPSElasped = ::GetElaspedMillisecond(&mFPSMilliseconds);
-	DWORD mblockDownOrStopElasped = ::GetElaspedMillisecond(&mblockDownOrStopMilliseconds);
+	DWORD FPSElasped = ::GetElaspedMillisecond(&mFPSMilliseconds);
+	DWORD blockDownOrStopElasped = ::GetElaspedMillisecond(&mBlockDownOrStopMilliseconds);
+	DWORD keyDownElasped = ::GetElaspedMillisecond(&mKeyDownMilliseconds);
 
-	if (mblockDownOrStopElasped >= 1000)
+	if (blockDownOrStopElasped >= 1000)
 	{
-		::InitTickCounter(&mblockDownOrStopMilliseconds);
-		
+		::InitTickCounter(&mBlockDownOrStopMilliseconds);
 		mShouldBlockDownOrStop = TRUE;
-		Update();
 	}
 
-	if (mFPSElasped >= 30)
+	if (keyDownElasped >= 100)
+	{
+		::InitTickCounter(&mKeyDownMilliseconds);
+		mCanUseKeyDown = TRUE;
+	}
+
+	if (FPSElasped >= 100)
 	{
 		::InitTickCounter(&mFPSMilliseconds);
 		Update();
@@ -75,6 +82,9 @@ void Tetris::Update()
 	int absPosX = 0;
 	int absPosY = 0;
 
+	int rotatedAbsPosX = 0;
+	int rotatedAbsPosY = 0;
+
 	BOOL bCanRotate = TRUE;
 	BOOL bCanMoveRight = TRUE;
 	BOOL bCanMoveLeft = TRUE;
@@ -82,13 +92,19 @@ void Tetris::Update()
 	for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 	{
 		::GetBlockAbsCoord(&mBlock, i, &absPosX, &absPosY);
+		::GetBlockAbsCoord(&mBlock, i, &absPosX, &absPosY);
+
+		if (true == mbMap[absPosY][absPosX + 1])
+		{
+			bCanMoveRight = FALSE;
+		}
 
 		if (absPosX + 1 >= MAP_WIDTH || true == mbMap[absPosY][absPosX + 1])
 		{
 			bCanMoveRight = FALSE;
 		}
 
-		if ((int)absPosX - 1 < 0 || true == mbMap[absPosY][absPosX - 1])
+		if (absPosX - 1 < 0 || true == mbMap[absPosY][absPosX - 1])
 		{
 			bCanMoveLeft = FALSE;
 		}
@@ -171,6 +187,30 @@ void Tetris::DrawScene()
 
 void Tetris::OnKeyDown(WPARAM wParam, LPARAM lParam)
 {
+	WCHAR str[100];
+	WORD vkCode = LOWORD(wParam);										// virtual-key code
+	BYTE scanCode = LOBYTE(HIWORD(lParam));                             // scan code
+	BOOL scanCodeE0 = (HIWORD(lParam) & KF_EXTENDED) == KF_EXTENDED;    // extended-key flag, 1 if scancode has 0xE0 prefix
+
+	BOOL upFlag = (HIWORD(lParam) & KF_UP) == KF_UP;                    // transition-state flag, 1 on keyup
+	BOOL repeatFlag = (HIWORD(lParam) & KF_REPEAT) == KF_REPEAT;        // previous key-state flag, 1 on autorepeat
+	WORD repeatCount = LOWORD(lParam);                                  // repeat count, > 0 if several keydown messages was combined into one message
+
+	BOOL altDownFlag = (HIWORD(lParam) & KF_ALTDOWN) == KF_ALTDOWN;     // ALT key was pressed
+
+	BOOL dlgModeFlag = (HIWORD(lParam) & KF_DLGMODE) == KF_DLGMODE;     // dialog box is active
+	BOOL menuModeFlag = (HIWORD(lParam) & KF_MENUMODE) == KF_MENUMODE;
+
+	if (FALSE == mCanUseKeyDown)
+	{
+		return;
+	}
+
+	wsprintf(str, L"KEYDOWN: vkCode: %5s, scanCode: %d, upFlag: %5s, repeatFlag: %5s, repeatCount: %d \n", 
+		wParam == VK_UP ? L"UP" : wParam == VK_LEFT ? L"LEFT" : L"RIGHT", scanCode, upFlag ? L"true" : L"false", repeatFlag ? L"true" : L"false", repeatCount);
+	
+	OutputDebugString(str);
+
 	switch (wParam)
 	{
 	case VK_UP:
@@ -184,10 +224,31 @@ void Tetris::OnKeyDown(WPARAM wParam, LPARAM lParam)
 	default:
 		break;
 	}
+
+	mCanUseKeyDown = FALSE;
 }
 
 void Tetris::OnKeyUp(WPARAM wParam, LPARAM lParam)
 {
+	WCHAR str[100];
+	WORD vkCode = LOWORD(wParam);										// virtual-key code
+	BYTE scanCode = LOBYTE(HIWORD(lParam));                             // scan code
+	BOOL scanCodeE0 = (HIWORD(lParam) & KF_EXTENDED) == KF_EXTENDED;    // extended-key flag, 1 if scancode has 0xE0 prefix
+
+	BOOL upFlag = (HIWORD(lParam) & KF_UP) == KF_UP;                    // transition-state flag, 1 on keyup
+	BOOL repeatFlag = (HIWORD(lParam) & KF_REPEAT) == KF_REPEAT;        // previous key-state flag, 1 on autorepeat
+	WORD repeatCount = LOWORD(lParam);                                  // repeat count, > 0 if several keydown messages was combined into one message
+
+	BOOL altDownFlag = (HIWORD(lParam) & KF_ALTDOWN) == KF_ALTDOWN;     // ALT key was pressed
+
+	BOOL dlgModeFlag = (HIWORD(lParam) & KF_DLGMODE) == KF_DLGMODE;     // dialog box is active
+	BOOL menuModeFlag = (HIWORD(lParam) & KF_MENUMODE) == KF_MENUMODE;
+
+	wsprintf(str, L"KEYUP  : vkCode: %5s, scanCode: %d, upFlag: %5s, repeatFlag: %5s, repeatCount: %d \n",
+		wParam == VK_UP ? L"UP" : wParam == VK_LEFT ? L"LEFT" : L"RIGHT", scanCode, upFlag ? L"true" : L"false", repeatFlag ? L"true" : L"false", repeatCount);
+
+	OutputDebugString(str);
+
 	switch (wParam)
 	{
 	case VK_UP:
