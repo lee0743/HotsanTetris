@@ -1,6 +1,9 @@
-#include "Block.h"
+#include "TetrisBlock.h"
 
-Point blockVertexArray[EBlockTypeCount][4][4] = {
+#define MAX_ROTATION_COUNT (4)
+#define VERTEX_COUNT (4)
+
+const Point blockVertexArray[ETetrisBlockType::Count][MAX_ROTATION_COUNT][VERTEX_COUNT] = {
 	{ // L Shape 
 		{ Point{0, 0}, Point{0, 1}, Point{0, 2}, Point{1, 2} },
 		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{0, 1} },
@@ -51,20 +54,18 @@ Point blockVertexArray[EBlockTypeCount][4][4] = {
 	}
 };
 
-Block MakeRandomBlock(int x, int y)
+TetrisBlock MakeRandomBlock(int x, int y)
 {
-	Block block;
-	{
-		block.pos.X = x;
-		block.pos.Y = y;
-		block.BlockType = (EBlockType)(rand() % EBlockTypeCount);
-		block.RotateCount = 0;
-	}
+	TetrisBlock block;
+	block.pos.X = x;
+	block.pos.Y = y;
+	block.BlockType = (ETetrisBlockType)(rand() % ETetrisBlockType::Count);
+	block.RotateCount = 0;
 
 	return block;
 }
 
-void GetBlockAbsCoord(const Block* block, DWORD vertexIndex, DWORD rotateCount, int* outX, int* outY)
+void GetBlockAbsPos(const TetrisBlock* block, DWORD vertexIndex, DWORD rotateCount, int* outX, int* outY)
 {
 	int absPosX = block->pos.X + blockVertexArray[block->BlockType][rotateCount][vertexIndex].X;
 	int absPosY = block->pos.Y + blockVertexArray[block->BlockType][rotateCount][vertexIndex].Y;

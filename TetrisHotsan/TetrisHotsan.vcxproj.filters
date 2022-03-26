@@ -31,6 +31,9 @@
     <Filter Include="소스 파일\Tetris">
       <UniqueIdentifier>{e21fcb4c-79da-41de-b4ec-f7910d7ec26f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Tetris\TetrisBlock">
+      <UniqueIdentifier>{c4402c96-6757-437c-b9b1-a1919d70863d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -60,17 +63,17 @@
     <ClInclude Include="Tetris.h">
       <Filter>소스 파일\Tetris</Filter>
     </ClInclude>
-    <ClInclude Include="EBlockType.h">
-      <Filter>소스 파일\Tetris</Filter>
-    </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>소스 파일\Tetris</Filter>
-    </ClInclude>
-    <ClInclude Include="BlockImage.h">
-      <Filter>소스 파일\Tetris</Filter>
-    </ClInclude>
     <ClInclude Include="TickCounter.h">
       <Filter>소스 파일\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockImage.h">
+      <Filter>소스 파일\BmpImg</Filter>
+    </ClInclude>
+    <ClInclude Include="TetrisBlock.h">
+      <Filter>소스 파일\Tetris\TetrisBlock</Filter>
+    </ClInclude>
+    <ClInclude Include="ETetrisBlockType.h">
+      <Filter>소스 파일\Tetris\TetrisBlock</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,14 +89,14 @@
     <ClCompile Include="Tetris.cpp">
       <Filter>소스 파일\Tetris</Filter>
     </ClCompile>
-    <ClCompile Include="BlockImage.cpp">
-      <Filter>소스 파일\Tetris</Filter>
-    </ClCompile>
-    <ClCompile Include="Block.cpp">
-      <Filter>소스 파일\Tetris</Filter>
-    </ClCompile>
     <ClCompile Include="TickCounter.cpp">
       <Filter>소스 파일\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockImage.cpp">
+      <Filter>소스 파일\BmpImg</Filter>
+    </ClCompile>
+    <ClCompile Include="TetrisBlock.cpp">
+      <Filter>소스 파일\Tetris\TetrisBlock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

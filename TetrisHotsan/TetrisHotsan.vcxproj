@@ -154,9 +154,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BitmapImage.h" />
-    <ClInclude Include="Block.h" />
+    <ClInclude Include="TetrisBlock.h" />
     <ClInclude Include="DDraw.h" />
-    <ClInclude Include="EBlockType.h" />
+    <ClInclude Include="ETetrisBlockType.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="BlockImage.h" />
     <ClInclude Include="Coord.h" />
@@ -169,7 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitmapImage.cpp" />
-    <ClCompile Include="Block.cpp" />
+    <ClCompile Include="TetrisBlock.cpp" />
     <ClCompile Include="DDraw.cpp" />
     <ClCompile Include="BlockImage.cpp" />
     <ClCompile Include="Tetris.cpp" />

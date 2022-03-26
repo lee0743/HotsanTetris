@@ -16,6 +16,8 @@ public:
 	BOOL DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image);
 	BOOL DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage* image, DWORD colorKey);
 	BOOL CalcClipArea(int * x, int * y, int * width, int * height);
+
+	void OnUpdateWindowPos();
 private:
 	IDirectDraw* mpDD = nullptr;
 	IDirectDraw7* mpDD7 = nullptr;

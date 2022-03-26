@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Coord.h"
-#include "EBlockType.h"
-#include "Block.h"
-#include "BitmapImage.h"
+#include "TetrisBlock.h"
 #include "DDraw.h"
 
 class Tetris
@@ -16,36 +13,32 @@ public:
 	void Process();
 	void Update();
 	void DrawScene();
+
 	void OnKeyDown(WPARAM wParam, LPARAM lParam);
 	void OnKeyUp(WPARAM wParam, LPARAM lParam);
-
+	void OnUpdateWindowPos();
 private:
 	enum {
 		MAP_WIDTH = 10,
 		MAP_HEIGHT = 22,
 		MAX_BLOCK_COUNT = 512,
-		BLOCK_VERTEX_COUNT = 4
+		BLOCK_VERTEX_COUNT = 4,
 	};
 
 	DDraw* mpDDraw = nullptr;
-	BitmapImage* mCell = nullptr;
-	BitmapImage* mBackgroundImage = nullptr;
-
-	double fps = 1;
-	BOOL blockStopped = false;
-
-	Block mBlock = { 0, };
-	Block mNextBlock = { 0, };
-
-	BOOL mbMap[MAP_HEIGHT][MAP_WIDTH] = { 0, };
+	
 	unsigned int mSeed = 0;
+	BitmapImage* mBlockImage = nullptr;
+	BitmapImage* mBackgroundImage = nullptr;
+	TetrisBlock mCurrentTetrisBlock = { 0, };
+	TetrisBlock mNextTetrisBlock = { 0, };
+	BOOL mbExistFixedBlock[MAP_HEIGHT][MAP_WIDTH] = { 0, };
 
 	BOOL mKeyUpPressed = false;
 	BOOL mKeyDownPressed = false;
 	BOOL mKeyRightPressed = false;
 	BOOL mKeyLeftPressed = false;
-
-	DWORD mShouldBlockDownOrStop = false;
+	BOOL mShouldBlockDownOrStop = false;
 
 	ULONGLONG mBlockDownOrStopMilliseconds = 0;
 	ULONGLONG mFPSMilliseconds = 0;

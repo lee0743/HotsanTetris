@@ -1,8 +1,6 @@
 #pragma once
 
-#define EBlockTypeCount (7)
-
-enum EBlockType
+enum ETetrisBlockType
 {
 	LShape = 0,
 	TShape = 1,
@@ -11,4 +9,6 @@ enum EBlockType
 	InvLShape = 4,
 	InvZShape = 5,
 	IShape = 6,
+
+	Count
 };

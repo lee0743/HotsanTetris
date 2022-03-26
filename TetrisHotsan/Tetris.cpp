@@ -1,5 +1,4 @@
 #include <time.h>
-#include <stdlib.h>
 
 #include "Tetris.h"
 #include "TickCounter.h"
@@ -22,9 +21,9 @@ Tetris::~Tetris()
 		delete mBackgroundImage;
 	}
 
-	if (mCell != nullptr)
+	if (mBlockImage != nullptr)
 	{
-		delete mCell;
+		delete mBlockImage;
 	}
 }
 
@@ -39,11 +38,11 @@ void Tetris::Initialize(HWND hwnd)
 	mBackgroundImage = new BitmapImage;
 	mBackgroundImage->Load24BitsBitmap("./assets/map2.bmp");
 
-	mCell = new BitmapImage;
-	mCell->Load24BitsBitmap("./assets/redBlockGradient.bmp");
+	mBlockImage = new BitmapImage;
+	mBlockImage->Load24BitsBitmap("./assets/redBlockGradient.bmp");
 
-	mBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
-	mNextBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
+	mCurrentTetrisBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
+	mNextTetrisBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
 
 	::InitTickCounter(&mBlockDownOrStopMilliseconds);
 	::InitTickCounter(&mFPSMilliseconds);
@@ -84,25 +83,25 @@ void Tetris::Update()
 
 	for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 	{
-		::GetBlockAbsCoord(&mBlock, i, mBlock.RotateCount, &absPosX, &absPosY);
-		::GetBlockAbsCoord(&mBlock, i, (mBlock.RotateCount + 1) % 4, &rotatedAbsPosX, &rotatedAbsPosY);
+		::GetBlockAbsPos(&mCurrentTetrisBlock, i, mCurrentTetrisBlock.RotateCount, &absPosX, &absPosY);
+		::GetBlockAbsPos(&mCurrentTetrisBlock, i, (mCurrentTetrisBlock.RotateCount + 1) % 4, &rotatedAbsPosX, &rotatedAbsPosY);
 
-		if (rotatedAbsPosX >= MAP_WIDTH || rotatedAbsPosX < 0 || rotatedAbsPosY >= MAP_HEIGHT || true == mbMap[rotatedAbsPosX][rotatedAbsPosY])
+		if (rotatedAbsPosX >= MAP_WIDTH || rotatedAbsPosX < 0 || rotatedAbsPosY >= MAP_HEIGHT || true == mbExistFixedBlock[rotatedAbsPosX][rotatedAbsPosY])
 		{
 			bCanRotate = FALSE;
 		}
 
-		if (absPosX + 1 >= MAP_WIDTH || true == mbMap[absPosY][absPosX + 1])
+		if (absPosX + 1 >= MAP_WIDTH || true == mbExistFixedBlock[absPosY][absPosX + 1])
 		{
 			bCanMoveRight = FALSE;
 		}
 
-		if (absPosX - 1 < 0 || true == mbMap[absPosY][absPosX - 1])
+		if (absPosX - 1 < 0 || true == mbExistFixedBlock[absPosY][absPosX - 1])
 		{
 			bCanMoveLeft = FALSE;
 		}
 
-		if (absPosY + 1 >= MAP_HEIGHT || true == mbMap[absPosY + 1][absPosX])
+		if (absPosY + 1 >= MAP_HEIGHT || true == mbExistFixedBlock[absPosY + 1][absPosX])
 		{
 			bCanMoveDown = FALSE;
 		}
@@ -110,22 +109,22 @@ void Tetris::Update()
 
 	if (mKeyUpPressed && bCanRotate)
 	{
-		mBlock.RotateCount == 3 ? mBlock.RotateCount = 0 : mBlock.RotateCount++;
+		mCurrentTetrisBlock.RotateCount == 3 ? mCurrentTetrisBlock.RotateCount = 0 : mCurrentTetrisBlock.RotateCount++;
 	}
 
 	if (mKeyRightPressed && bCanMoveRight)
 	{
-		mBlock.pos.X += 1;
+		mCurrentTetrisBlock.pos.X += 1;
 	}
 
 	if (mKeyLeftPressed && bCanMoveLeft)
 	{
-		mBlock.pos.X -= 1;
+		mCurrentTetrisBlock.pos.X -= 1;
 	}
 
 	if (mKeyDownPressed && bCanMoveDown)
 	{
-		mBlock.pos.Y += 1;
+		mCurrentTetrisBlock.pos.Y += 1;
 	}
 
 	if (mShouldBlockDownOrStop)
@@ -134,9 +133,9 @@ void Tetris::Update()
 
 		for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 		{
-			::GetBlockAbsCoord(&mBlock, i, mBlock.RotateCount, &absPosX, &absPosY);
+			::GetBlockAbsPos(&mCurrentTetrisBlock, i, mCurrentTetrisBlock.RotateCount, &absPosX, &absPosY);
 
-			if (absPosY + 1 >= MAP_HEIGHT || true == mbMap[absPosY + 1][absPosX])
+			if (absPosY + 1 >= MAP_HEIGHT || true == mbExistFixedBlock[absPosY + 1][absPosX])
 			{
 				bCanBlockDown = FALSE;
 			}
@@ -144,15 +143,15 @@ void Tetris::Update()
 
 		if (bCanBlockDown)
 		{
-			mBlock.pos.Y += 1;
+			mCurrentTetrisBlock.pos.Y += 1;
 		}
 		else
 		{
 			for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 			{
-				::GetBlockAbsCoord(&mBlock, i, mBlock.RotateCount, &absPosX, &absPosY);
+				::GetBlockAbsPos(&mCurrentTetrisBlock, i, mCurrentTetrisBlock.RotateCount, &absPosX, &absPosY);
 
-				mbMap[absPosY][absPosX] = true;
+				mbExistFixedBlock[absPosY][absPosX] = true;
 			}
 
 			// HACK: Will Fix later
@@ -161,23 +160,26 @@ void Tetris::Update()
 				DWORD count = 0;
 				for (DWORD x = 0; x < MAP_WIDTH; ++x)
 				{
-					if (mbMap[y][x] == true)
+					if (mbExistFixedBlock[y][x] == true)
 					{
 						count++;
 					}
 				}
 
-				if (count >= MAP_WIDTH - 1)
+				if (count >= MAP_WIDTH)
 				{
-					for (DWORD x = 0; x < MAP_WIDTH; ++x)
+					for (int yPos = y; yPos > 0; --yPos)
 					{
-						mbMap[y][x] = false;
+						for (int x = 0; x < MAP_WIDTH; ++x)
+						{
+							mbExistFixedBlock[yPos][x] = mbExistFixedBlock[yPos - 1][x];
+						}
 					}
 				}
 			}
 
-			mBlock = mNextBlock;
-			mNextBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
+			mCurrentTetrisBlock = mNextTetrisBlock;
+			mNextTetrisBlock = ::MakeRandomBlock(MAP_WIDTH / 2, 0);
 		}
 
 		mShouldBlockDownOrStop = false;
@@ -190,17 +192,17 @@ void Tetris::DrawScene()
 	{
 		mpDDraw->DrawBitmapImage(0, 0, mBackgroundImage);
 		
-		const DWORD cellWidth = mCell->GetWidth();
-		const DWORD cellHeight = mCell->GetHeight();
+		const DWORD cellWidth = mBlockImage->GetWidth();
+		const DWORD cellHeight = mBlockImage->GetHeight();
 
 		for (DWORD i = 0; i < BLOCK_VERTEX_COUNT; ++i)
 		{
 			int absPosX = 0;
 			int absPosY = 0;
 
-			::GetBlockAbsCoord(&mBlock, i, mBlock.RotateCount, &absPosX, &absPosY);
+			::GetBlockAbsPos(&mCurrentTetrisBlock, i, mCurrentTetrisBlock.RotateCount, &absPosX, &absPosY);
 
-			mpDDraw->DrawBitmapImage(absPosX * cellWidth + 1, absPosY * cellHeight + 1, mCell);
+			mpDDraw->DrawBitmapImage(absPosX * cellWidth + 1, absPosY * cellHeight + 1, mBlockImage);
 		}
 
 		const DWORD startX = 1;
@@ -210,9 +212,9 @@ void Tetris::DrawScene()
 		{
 			for (DWORD x = 0; x < MAP_WIDTH; ++x)
 			{
-				if (mbMap[y][x] == true)
+				if (mbExistFixedBlock[y][x] == true)
 				{
-					mpDDraw->DrawBitmapImage(startX + x * cellWidth,  startY + y * cellHeight, mCell); // +1 to avoid border
+					mpDDraw->DrawBitmapImage(startX + x * cellWidth,  startY + y * cellHeight, mBlockImage); // +1 to avoid border
 				}
 			}
 		}
@@ -261,32 +263,10 @@ void Tetris::OnKeyUp(WPARAM wParam, LPARAM lParam)
 	}
 }
 
-/*
-if (blockStopped) {
-	blockStopped = false;
-
-	for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-		int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].X;
-		int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].Y;
-
-		mbMap[absPosY][absPosX] = true;
-	}
-
-	mBlock = ::MakeRandomBlock(0, 0);
-
-}
-
-for (size_t i = 0; i < BLOCK_VERTEX_COUNT; ++i) {
-	int absPosX = mBlock.pos.X + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].X;
-	int absPosY = mBlock.pos.Y + blockVertexArray[mBlock.BlockType][mBlock.RotateCount][i].Y;
-
-	if (absPosY + 1 >= 22 || true == mbMap[absPosY + 1][absPosX]) {
-		blockStopped = true;
-	}
-}
-
-if (!blockStopped)
+void Tetris::OnUpdateWindowPos()
 {
-	mBlock.pos.Y += 1;
+	if (nullptr != mpDDraw)
+	{
+		mpDDraw->OnUpdateWindowPos();
+	}
 }
-*/

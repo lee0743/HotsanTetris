@@ -90,9 +90,7 @@ BOOL DDraw::Initialize(HWND hwnd)
 	mpClipper->SetHWnd(0, mHWnd);
 	mpDDPrimary->SetClipper(mpClipper);
 
-	GetClientRect(mHWnd, &mWindow);
-	::ClientToScreen(mHWnd, (POINT*)&mWindow.left);
-	::ClientToScreen(mHWnd, (POINT*)&mWindow.right);
+	OnUpdateWindowPos();
 
 	width = mWindow.right - mWindow.left;
 	height = mWindow.bottom - mWindow.top;
@@ -164,18 +162,18 @@ BOOL DDraw::DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image)
 	int height = image->GetHeight();
 
 	char* pBits = image->GetRawImage();
-	/*
+	
 	if (FALSE == CalcClipArea(&x, &y, &width, &height))
 	{
 		__debugbreak();
 	}
-	*/
+	
 	char* src = (char*)pBits;
 	char* dest = mpLockedBackBuffer + (y * mLockedBackBufferPitch) + (x * 4);
 
 	for (int y = 0; y < height; ++y)
 	{
-		for (DWORD x = 0; x < width; ++x)
+		for (int x = 0; x < width; ++x)
 		{
 			*(DWORD*)dest = *(DWORD*)src;
 
@@ -211,9 +209,9 @@ BOOL DDraw::DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage * im
 	char* src = (char*)pBits;
 	char* dest = mpLockedBackBuffer + (y * mLockedBackBufferPitch) + x;
 
-	for (DWORD y = 0; y < height; ++y)
+	for (int y = 0; y < height; ++y)
 	{
-		for (DWORD x = 0; x < width; ++x)
+		for (int x = 0; x < width; ++x)
 		{
 			if (*(DWORD*)src != colorKey)
 			{
@@ -236,16 +234,16 @@ BOOL DDraw::DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage * im
 BOOL DDraw::CalcClipArea(int* x, int* y, int* width, int* height)
 {
 	int startX = max(0, *x);
-	startX = min(mWidth, *x);
+	startX = min((int)mWidth, *x);
 
 	int startY = max(0, *y);
-	startY = min(mHeight, *y);
+	startY = min((int)mHeight, *y);
 
 	int endX = max(*x + *width, 0);
-	endX = min(*x + *width, mWidth);
+	endX = min(*x + *width, (int)mWidth);
 
 	int endY = max(*y + *height, 0);
-	endY = min(*y + *height, mHeight);
+	endY = min(*y + *height, (int)mHeight);
 
 	int clipedWidth = endX - startX;
 	int clipedHeight = endY - startY;
@@ -262,4 +260,11 @@ BOOL DDraw::CalcClipArea(int* x, int* y, int* width, int* height)
 	*height = clipedHeight;
 
 	return TRUE;
+}
+
+void DDraw::OnUpdateWindowPos()
+{
+	GetClientRect(mHWnd, &mWindow);
+	::ClientToScreen(mHWnd, (POINT*)&mWindow.left);
+	::ClientToScreen(mHWnd, (POINT*)&mWindow.right);
 }
