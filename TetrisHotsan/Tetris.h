@@ -33,20 +33,22 @@ private:
 
 	double fps = 1;
 	BOOL blockStopped = false;
-	Block mBlock;
+
+	Block mBlock = { 0, };
+	Block mNextBlock = { 0, };
+
 	BOOL mbMap[MAP_HEIGHT][MAP_WIDTH] = { 0, };
 	unsigned int mSeed = 0;
 
 	BOOL mKeyUpPressed = false;
+	BOOL mKeyDownPressed = false;
 	BOOL mKeyRightPressed = false;
 	BOOL mKeyLeftPressed = false;
 
 	DWORD mShouldBlockDownOrStop = false;
-	DWORD mCanUseKeyDown = false;
 
 	ULONGLONG mBlockDownOrStopMilliseconds = 0;
 	ULONGLONG mFPSMilliseconds = 0;
-	ULONGLONG mKeyDownMilliseconds = 0;
 };
 
 extern Tetris* gpTetris;
