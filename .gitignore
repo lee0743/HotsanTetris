@@ -11,6 +11,7 @@ Debug
 *.bmp
 !redBlock*.bmp
 redBlock*Rotated*.bmp
+!bonobono.bmp
 !map2.bmp
 #Ignore files build by Visual Studio
 *.obj

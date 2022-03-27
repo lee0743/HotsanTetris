@@ -135,6 +135,8 @@ BOOL DDraw::LockBackBuffer()
 		assert(ddsd.dwHeight == mHeight);
 	}
 
+	memset(mpLockedBackBuffer, 0, mLockedBackBufferPitch * mHeight);
+
 	bResult = TRUE;
 	return bResult;
 }
@@ -150,6 +152,14 @@ void DDraw::UnlockBackBuffer()
 void DDraw::Blt()
 {
 	mpDDPrimary->Blt(&mWindow, mpDDBack, nullptr, DDBLT_WAIT, nullptr);
+}
+
+void DDraw::Clear()
+{
+	if (mpLockedBackBuffer != nullptr)
+	{
+		memset(mpLockedBackBuffer, 0xff, mLockedBackBufferPitch * mHeight);
+	}
 }
 
 BOOL DDraw::DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image)

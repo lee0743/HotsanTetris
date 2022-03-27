@@ -2,6 +2,7 @@
 
 #include "TetrisBlock.h"
 #include "DDraw.h"
+#include "TetrisMap.h"
 
 class Tetris
 {
@@ -19,20 +20,20 @@ public:
 	void OnUpdateWindowPos();
 private:
 	enum {
-		MAP_WIDTH = 10,
-		MAP_HEIGHT = 22,
-		MAX_BLOCK_COUNT = 512,
 		BLOCK_VERTEX_COUNT = 4,
 	};
 
 	DDraw* mpDDraw = nullptr;
 	
 	unsigned int mSeed = 0;
-	BitmapImage* mBlockImage = nullptr;
+	BitmapImage* mBlockImages[(DWORD)EColor::Count] = { 0, };
+	BitmapImage* mMapImage = nullptr;
 	BitmapImage* mBackgroundImage = nullptr;
 	TetrisBlock mCurrentTetrisBlock = { 0, };
 	TetrisBlock mNextTetrisBlock = { 0, };
-	BOOL mbExistFixedBlock[MAP_HEIGHT][MAP_WIDTH] = { 0, };
+
+	TetrisMap mTetrisMap[(DWORD)ETetrisMap::HEIGHT][(DWORD)ETetrisMap::WIDTH] = {};
+	DWORD mTetrisMapRowBlockCounts[(DWORD)ETetrisMap::HEIGHT] = { 0, };
 
 	BOOL mKeyUpPressed = false;
 	BOOL mKeyDownPressed = false;

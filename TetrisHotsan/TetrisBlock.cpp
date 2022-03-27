@@ -3,7 +3,7 @@
 #define MAX_ROTATION_COUNT (4)
 #define VERTEX_COUNT (4)
 
-const Point blockVertexArray[ETetrisBlockType::Count][MAX_ROTATION_COUNT][VERTEX_COUNT] = {
+const Point blockVertexArray[(DWORD)ETetrisBlockType::Count][MAX_ROTATION_COUNT][VERTEX_COUNT] = {
 	{ // L Shape 
 		{ Point{0, 0}, Point{0, 1}, Point{0, 2}, Point{1, 2} },
 		{ Point{0, 0}, Point{1, 0}, Point{2, 0}, Point{0, 1} },
@@ -59,16 +59,17 @@ TetrisBlock MakeRandomBlock(int x, int y)
 	TetrisBlock block;
 	block.pos.X = x;
 	block.pos.Y = y;
-	block.BlockType = (ETetrisBlockType)(rand() % ETetrisBlockType::Count);
+	block.BlockType = (ETetrisBlockType)(rand() % (DWORD)ETetrisBlockType::Count);
 	block.RotateCount = 0;
+	block.Color = (EColor)(rand() % (DWORD)EColor::Count);
 
 	return block;
 }
 
 void GetBlockAbsPos(const TetrisBlock* block, DWORD vertexIndex, DWORD rotateCount, int* outX, int* outY)
 {
-	int absPosX = block->pos.X + blockVertexArray[block->BlockType][rotateCount][vertexIndex].X;
-	int absPosY = block->pos.Y + blockVertexArray[block->BlockType][rotateCount][vertexIndex].Y;
+	int absPosX = block->pos.X + blockVertexArray[(DWORD)block->BlockType][rotateCount][vertexIndex].X;
+	int absPosY = block->pos.Y + blockVertexArray[(DWORD)block->BlockType][rotateCount][vertexIndex].Y;
 
 	*outX = absPosX;
 	*outY = absPosY;

@@ -23,10 +23,26 @@ constexpr DWORD RevRGBA(DWORD bgr)
 
 enum class EColor
 {
+	Red = 0,
+	Green = 1,
+	Blue = 2,
+	Purple = 3,
+	Gray = 4,
+	Ibory = 5,
+
+	Count
+};
+
+/*
+enum class EColor
+{
 	Red = (int)MakeRGBA(0xff, 0x00, 0x00),
 	Green = (int)MakeRGBA(0x00, 0xff, 0x00),
 	Blue = (int)MakeRGBA(0x00, 0x00, 0xff),
 	Purple = (int)MakeRGBA(0x80, 0x00, 0xff),
 	Gray = (int)MakeRGBA(0x80, 0x80, 0x80),
-	Ibory = (int)MakeRGBA(0xc8, 0xbf, 0xe7)
+	Ibory = (int)MakeRGBA(0xc8, 0xbf, 0xe7),
+
+	Count = 6
 };
+*/

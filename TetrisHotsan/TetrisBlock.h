@@ -4,12 +4,14 @@
 
 #include "Coord.h"
 #include "ETetrisBlockType.h"
+#include "RGBA.h"
 
 struct TetrisBlock
 {
 	Point pos;
 	ETetrisBlockType BlockType;
 	int RotateCount;
+	EColor Color;
 };
 
 TetrisBlock MakeRandomBlock(int x, int y);

@@ -12,6 +12,7 @@ public:
 	BOOL LockBackBuffer();
 	void UnlockBackBuffer();
 	void Blt();
+	void Clear();
 
 	BOOL DrawBitmapImage(DWORD xPos, DWORD yPos, BitmapImage* image);
 	BOOL DrawBitmapImageWithColorKey(DWORD xPos, DWORD yPos, BitmapImage* image, DWORD colorKey);

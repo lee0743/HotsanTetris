@@ -1,6 +1,6 @@
 #pragma once
 
-enum ETetrisBlockType
+enum class ETetrisBlockType
 {
 	LShape = 0,
 	TShape = 1,
